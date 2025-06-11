@@ -1,0 +1,21 @@
+---
+
+- name: COLLECT BIG-IP FACTS
+  f5networks.f5_modules.bigip_device_info:
+    gather_subset:
+      - system-info
+      - devices
+      - vlans
+      - self-ips
+      - trunks
+      - provision-info
+      - sync-status
+      - management-routes
+    provider: "{{ provider }}"
+  register: inventory_info
+
+- name: "Copy Inventory_Info Variable to Execution Environment File"
+  ansible.builtin.copy:
+    content: "{{ inventory_info | to_nice_json }}"
+    dest: "/tmp/inventory_{{ inventory_hostname }}.json"
+    mode: '0755'

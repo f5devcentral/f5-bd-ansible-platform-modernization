@@ -1,0 +1,40 @@
+---
+
+- name: Get Master Key
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "f5mku -K"
+    provider: "{{ f5_source_provider }}"
+  register: master_key_output
+
+- name: Debug Master Key master_key_output
+  ansible.builtin.debug:
+    var: master_key_output
+
+- name: Debug Master Key master_key_output.stdout
+  ansible.builtin.debug:
+    var: master_key_output.stdout
+
+- name: Set Crypto Key
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "
+      expect -c 'spawn tmsh modify /sys crypto master-key prompt-for-password;
+      sleep 1;
+      send -- {{ ansible_password }}\r;
+      sleep 1;
+      send -- {{ ansible_password }}\r;
+      sleep 1;'"
+    provider: "{{ f5_source_provider }}"
+
+- name: SAVE RUNNING CONFIG ON BIG-IP
+  f5networks.f5_modules.bigip_config:
+    provider: "{{ f5_source_provider }}"
+    save: true
+
+- name: "Copy Inventory to file for {{ inventory_hostname }}"
+  ansible.builtin.copy:
+    content: "{{ master_key_output | to_nice_json }}"
+    dest: "/tmp/master_key_{{ inventory_hostname }}.json"
+    mode: '0755'
+  delegate_to: localhost

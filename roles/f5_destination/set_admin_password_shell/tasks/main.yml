@@ -1,0 +1,29 @@
+---
+
+- name: Set admin Password
+  ansible.builtin.uri:
+    url: "https://{{ ansible_host }}/mgmt/shared/authz/users/admin"
+    method: PATCH
+    body: '{"oldPassword":"admin","password":"{{ ansible_password }}"}'
+    body_format: json
+    validate_certs: false
+    force_basic_auth: true
+    user: admin
+    password: admin
+    headers:
+      Content-Type: "application/json"
+  register: result
+  delegate_to: localhost
+  ignore_errors: true
+
+- name: "Change the user shell (Advanced) for {{ ansible_user }}"
+  f5networks.f5_modules.bigip_user:
+    username_credential: "{{ ansible_user }}"
+    shell: bash
+    state: present
+    provider: "{{ provider }}"
+  register: f5_shell
+  until: f5_shell.changed
+  retries: 10
+  delay: 10
+  delegate_to: localhost

@@ -1,0 +1,14 @@
+---
+
+- name: Use find to get the files list which you want to copy/fetch
+  ansible.builtin.find:
+    paths: /tmp/
+    patterns: "*.ucs"
+  register: ucs_fetch
+  delegate_to: localhost
+
+- name: Upload UCS
+  f5networks.f5_bigip.bigip_ucs:
+    ucs: "{{ ucs_fetch.files[0].path }}"
+    state: present
+  register: restore_task_upload

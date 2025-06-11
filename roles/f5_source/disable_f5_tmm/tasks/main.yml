@@ -1,0 +1,9 @@
+---
+
+- name: Stop BIGSTART to Disable Node
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "bigstart stop"
+    provider: "{{ provider }}"
+  register: stop_task
+  ignore_errors: true

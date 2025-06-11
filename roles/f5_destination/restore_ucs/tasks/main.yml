@@ -1,0 +1,17 @@
+---
+
+- name: Find Local UCS File Name
+  ansible.builtin.find:
+    paths: /tmp/
+    patterns: "*.ucs"
+  register: ucs_fetch
+  delegate_to: localhost
+
+- name: Run Restore Command with Platform-Migrate
+  ansible.builtin.command: "tmsh load /sys ucs {{ ucs_fetch.files[0].path.split('/')[2] }} no-license platform-migrate"
+  register: restore_task
+  changed_when: restore_task.rc != 0
+
+- name: Debug Output of Restore
+  ansible.builtin.debug:
+    var: restore_task

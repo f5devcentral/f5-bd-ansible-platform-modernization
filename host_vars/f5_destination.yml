@@ -1,0 +1,28 @@
+# F5 Destination Details
+server_port: 443
+cpu_cores: 4
+memory: "{{ ( 3.5 * 1024 * cpu_cores ) + 512 | int }}"
+
+# F5 Destination MGMT-IP and VLAN Details
+mgmt_ip: 192.170.14.85
+mgmt_sn_cidr: 24
+mgmt_gw: 192.170.14.1
+mgmt_vlan: 3014
+
+# Imperative Provider
+provider:
+  server: "{{ ansible_host }}"
+  user: "{{ ansible_user }}"
+  password: "{{ ansible_password }}"
+  server_port: "{{ server_port }}"
+  no_f5_teem: true
+  validate_certs: false
+
+# Declarative Provider Variables
+ansible_httpapi_password: "{{ ansible_password }}"
+ansible_network_os: f5networks.f5_bigip.bigip
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+ansible_httpapi_port: "{{ server_port }}"
+ansible_command_timeout: 600
+ansible_httpapi_use_proxy: false

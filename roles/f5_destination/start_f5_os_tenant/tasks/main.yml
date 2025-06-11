@@ -1,0 +1,20 @@
+---
+
+- name: Start F5 Tenant
+  f5networks.f5os.f5os_tenant:
+    name: '{{ inventory.devices[0].hostname.split(".")[0] }}'
+    nodes: 1
+    running_state: deployed
+
+- name: Wait for F5 Tenant to Show GUI Page
+  ansible.builtin.uri:
+    url: "https://{{ mgmt_ip }}"
+    method: GET
+    return_content: true
+    status_code: 200
+    validate_certs: false
+  register: atc_do_status
+  until: atc_do_status is success
+  retries: 30
+  delay: 30
+  delegate_to: localhost

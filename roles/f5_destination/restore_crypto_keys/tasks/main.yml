@@ -1,0 +1,75 @@
+---
+
+- name: Import Source BIG-IP Master Key From JSON File
+  ansible.builtin.set_fact:
+    master_key_output: "{{ lookup('file', item) | from_json }}"
+  with_fileglob: "/tmp/master_key_*.json"
+  delegate_to: localhost
+
+- name: Debug Source BIG-IP Master Key master_key_output.stdout
+  ansible.builtin.debug:
+    var: master_key_output.stdout[0]
+
+- name: Get Destination Master Key Prior to KeyChange
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "f5mku -K"
+    provider: "{{ provider }}"
+  register: f5_old_key
+  until: f5_old_key is defined and 'stdout' in f5_old_key and f5_old_key.stdout[0] | trim | length > 0
+  retries: 10
+  delay: 10
+
+- name: Debug Destination Master Key Prior to KeyChange
+  ansible.builtin.debug:
+    var: f5_old_key
+
+- name: Set Destination BIG-IP Master Key to Source BIG-IP Master Key
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "f5mku -r {{ master_key_output.stdout[0] }}"
+    provider: "{{ provider }}"
+  register: f5_re_key
+  until: "'Rekeying' in f5_re_key.stdout[0]"
+  retries: 10
+  delay: 10
+
+- name: Set Destination Crypto Key
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "
+      expect -c 'spawn tmsh modify /sys crypto master-key prompt-for-password;
+      sleep 1;
+      send -- {{ ansible_password }}\r;
+      sleep 1;
+      send -- {{ ansible_password }}\r;
+      sleep 1;'"
+    provider: "{{ provider }}"
+  register: f5_set_key
+  until: f5_set_key is defined and 'stdout' in f5_set_key and 'spawn' in f5_set_key.stdout[0]
+  retries: 10
+  delay: 10
+
+- name: Save Running Configuration on Destination BIG-IP
+  f5networks.f5_modules.bigip_config:
+    provider: "{{ provider }}"
+    save: true
+  register: f5_save
+  until: f5_save.changed
+  retries: 10
+  delay: 10
+
+- name: What is the Current Destination BIG-IP Master Key
+  f5networks.f5_modules.bigip_command:
+    commands: >
+      run /util bash -c "f5mku -K"
+    provider: "{{ provider }}"
+  register: cur_key
+  until: cur_key is defined and 'stdout' in cur_key and cur_key.stdout[0] | trim | length > 0
+  retries: 10
+  delay: 10
+
+
+- name: Debug Destination BIG-IP Master Key
+  ansible.builtin.debug:
+    var: cur_key

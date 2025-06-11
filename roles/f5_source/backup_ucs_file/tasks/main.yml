@@ -1,0 +1,34 @@
+---
+
+- name: Get timestamp from the system
+  ansible.builtin.command: "date +%Y-%m-%d%H-%M-%S"
+  register: tstamp
+  changed_when: tstamp.rc != 0
+  delegate_to: localhost
+
+- name: Set variables
+  ansible.builtin.set_fact:
+    cur_date: "{{ tstamp.stdout[0:10] }}"
+    cur_time: "{{ tstamp.stdout[10:] }}"
+
+- name: Create a new UCS
+  f5networks.f5_bigip.bigip_ucs_fetch:
+    src: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+    dest: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+  register: task
+  notify: Wait for Backup Task to complete
+
+- name: Debug task
+  ansible.builtin.debug:
+    var: task
+
+- name: Download an existing UCS
+  f5networks.f5_bigip.bigip_ucs_fetch:
+    src: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+    dest: "/tmp/{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+    timeout: 600
+  register: ucs_backup_status
+  failed_when: false
+  until: ucs_backup_status is success
+  retries: 3
+  delay: 5
