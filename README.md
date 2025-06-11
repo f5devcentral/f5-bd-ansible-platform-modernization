@@ -116,5 +116,4 @@ Run the job template through the Ansible Automation Platform interface to automa
 
 ## Conclusion
 
-This playbook provides an automated and efficient way to modernize F5 platforms, ensuring smooth transitions between old and new F5 BIG-IP models. By using this playbook in Ansible Automation Platform, you can minimize downtime and manual intervention while ensuring that critical configurations are transferred safely and accurately.
-
+This playbook offers an automated and efficient solution for modernizing F5 platforms, ensuring a seamless transition from older F5 BIG-IP models to newer ones, including version upgrades (e.g., from 15.1.x to 17.5). By leveraging Ansible Automation Platform, you can minimize downtime and manual intervention, while ensuring that critical configurations, such as UCS and crypto files, are securely and accurately transferred to the new platform.
