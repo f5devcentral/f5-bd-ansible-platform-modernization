@@ -2,6 +2,13 @@
 
 This Ansible playbook automates the modernization of F5 platforms, enabling seamless migration from older F5 BIG-IP models to newer ones. It facilitates the backup, migration, upgrade, and restoration of critical configurations, including UCS (User Configuration Set) files, crypto files, and other essential components. Additionally, this playbook supports version upgrades, such as migrating from lower versions (e.g., 15.1.x) to more recent releases (e.g., 17.5).
 
+## PLEASE READ FIRST!
+
+- This code is a WORK IN PROGRESS
+- This code has been tested against a i10800 platform as the source and a Velos CX410 with BX110 Blade System as the Destination
+- The Firmware used on the Velos Chassis Controller and Partition utilized F5OS 1.8.1 GA Code due to the Management IP
+- This code hasnt been coded for rSeries or VE as of yet for the Destination 
+
 ## Prerequisites
 
 Before using this playbook, ensure you have the following:
