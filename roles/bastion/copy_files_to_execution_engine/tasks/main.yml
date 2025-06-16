@@ -1,0 +1,29 @@
+---
+
+- name: Use find to get the files list which you want to copy/fetch
+  ansible.builtin.find:
+    paths: /tmp/
+    patterns: "/tmp/master_key_*.json"
+  register: file_fetch
+
+- name: Use find to get the files list which you want to copy/fetch
+  ansible.builtin.find:
+    paths: /tmp/
+    patterns: "/tmp/inventory_*.json"
+  register: file_2_fetch
+
+- name: Use find to get the files list which you want to copy/fetch
+  ansible.builtin.find:
+    paths: /tmp/
+    patterns: "/tmp/*.ucs"
+  register: file_3_fetch
+
+- name: Use fetch to get the files
+  ansible.builtin.fetch:
+    src: "{{ item.path }}"
+    dest: /tmp/
+    flat: true
+  with_items:
+    - "{{ file_fetch.files }}"
+    - "{{ file_2_fetch.files }}"
+    - "{{ file_3_fetch.files }}"

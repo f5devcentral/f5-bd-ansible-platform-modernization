@@ -61,8 +61,8 @@
 - name: Set Management-VLAN if Defined
   ansible.builtin.uri:
     url: >
-      'https://{{ ansible_host }}:8888/restconf/data/f5-tenants:tenants/tenant={{
-      inventory.devices[0].hostname.split(".")[0] }}/config/f5-tenant-mgmt-vlan:mgmt-vlan'
+      https://{{ ansible_host }}:8888/restconf/data/f5-tenants:tenants/tenant={{
+      inventory.devices[0].hostname.split(".")[0] }}/config/f5-tenant-mgmt-vlan:mgmt-vlan
     method: PUT
     status_code:
       - 200
