@@ -4,7 +4,7 @@
   f5networks.f5_modules.bigip_command:
     commands: >
       run /util bash -c "f5mku -K"
-    provider: "{{ f5_source_provider }}"
+    provider: "{{ provider }}"
   register: master_key_output
 
 - name: Debug Master Key master_key_output
@@ -25,11 +25,11 @@
       sleep 1;
       send -- {{ ansible_password }}\r;
       sleep 1;'"
-    provider: "{{ f5_source_provider }}"
+    provider: "{{ provider }}"
 
 - name: SAVE RUNNING CONFIG ON BIG-IP
   f5networks.f5_modules.bigip_config:
-    provider: "{{ f5_source_provider }}"
+    provider: "{{ provider }}"
     save: true
 
 - name: "Copy Inventory to file for {{ inventory_hostname }}"
