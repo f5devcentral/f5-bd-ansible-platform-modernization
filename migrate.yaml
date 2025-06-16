@@ -60,7 +60,7 @@
   connection: local
   gather_facts: false
   roles:
-    - restore_ucs_file
+    - restore_ucs
 
 - name: "[10] Wait for UCS Restore to Complete"
   hosts: f5_destination
