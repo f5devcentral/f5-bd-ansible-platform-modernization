@@ -57,7 +57,7 @@
 
 - name: "[09] Restore Destination BIG-IP UCS"
   hosts: f5_destination_tenant
-  connection: local
+  connection: ssh
   gather_facts: false
   roles:
     - restore_ucs
