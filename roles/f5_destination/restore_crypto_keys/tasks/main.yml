@@ -73,3 +73,7 @@
 - name: Debug Destination BIG-IP Master Key
   ansible.builtin.debug:
     var: cur_key
+
+- name: Pause 30 seconds
+  ansible.builtin.pause:
+    seconds: 30
