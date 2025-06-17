@@ -49,7 +49,7 @@
 - name: Find Tenant OS Image
   ansible.builtin.set_fact:
     f5_tenant_image: "{{ item }}"
-  with_items: tenant_info.tenant_images
+  loop: "{{ tenant_info.tenant_images }}"
   when:
     - build_number is defined
     - build_number in item.name
