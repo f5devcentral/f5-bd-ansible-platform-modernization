@@ -58,6 +58,7 @@
     virtual_disk_size: "{{ disk_size | default('120') }}"
     running_state: configured
 
+# This code cannot be used on rSeries till 2.0ish versioning of F5OS so making it so that if not defined as velos will avoid.
 - name: Set Management-VLAN if Defined
   ansible.builtin.uri:
     url: >
