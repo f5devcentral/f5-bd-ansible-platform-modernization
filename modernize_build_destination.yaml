@@ -30,7 +30,6 @@
 
 - name: "[10] Restore Destination BIG-IP UCS"
   hosts: f5_destination_tenant
-  connection: local
   gather_facts: false
   roles:
     - restore_ucs
