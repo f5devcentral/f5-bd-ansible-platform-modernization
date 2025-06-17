@@ -79,5 +79,7 @@
     user: "{{ ansible_user }}"
     password: "{{ ansible_password }}"
     validate_certs: false
-  when: mgmt_vlan is defined
+  when: 
+    - mgmt_vlan is defined
+    - destination_platform is defined and destination_platform |lower == "velos"
   delegate_to: localhost
