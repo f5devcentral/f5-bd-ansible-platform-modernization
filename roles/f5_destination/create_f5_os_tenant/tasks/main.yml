@@ -42,18 +42,22 @@
   ansible.builtin.debug:
     var: vlan_list
 
+- name: Debug Output
+  ansible.builtin.debug:
+    var: tenant_info.tenant_images
+
 - name: Find Tenant OS Image
   ansible.builtin.set_fact:
     f5_tenant_image: "{{ item }}"
   with_items: tenant_info.tenant_images
-  when: 
-   - build_number is defined
-   - build_number in item
+  when:
+    - build_number is defined
+    - build_number in item.name
 
 - name: Create F5 Tenant
   f5networks.f5os.f5os_tenant:
     name: '{{ inventory.devices[0].hostname.split(".")[0] }}'
-    image_name: "{{ tenant_info.tenant_images[0].name }}"
+    image_name: "{{ f5_tenant_image.name }}"
     nodes:
       - 1
     mgmt_ip: "{{ mgmt_ip }}"
