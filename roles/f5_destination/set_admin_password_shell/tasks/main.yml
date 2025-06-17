@@ -12,9 +12,13 @@
     password: admin
     headers:
       Content-Type: "application/json"
+    status_code: 200
   register: result
+  until: result is success
+  retries: 10
+  delay: 10
   delegate_to: localhost
-  ignore_errors: true
+  #no_log: true
 
 - name: "Change the user shell (Advanced) for {{ ansible_user }}"
   f5networks.f5_modules.bigip_user:
