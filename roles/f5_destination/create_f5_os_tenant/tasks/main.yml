@@ -46,7 +46,9 @@
   ansible.builtin.set_fact:
     f5_tenant_image: "{{ item }}"
   with_items: tenant_info.tenant_images
-  when: "build_number in item.name"
+  when: 
+   - build_number is defined
+   - build_number in item
 
 - name: Create F5 Tenant
   f5networks.f5os.f5os_tenant:
