@@ -42,6 +42,12 @@
   ansible.builtin.debug:
     var: vlan_list
 
+- name: Find Tenant OS Image
+  ansible.builtin.set_fact:
+    f5_tenant_image: "{{ item }}"
+  with_items: tenant_info.tenant_images
+  when: "build_number in item.name"
+
 - name: Create F5 Tenant
   f5networks.f5os.f5os_tenant:
     name: '{{ inventory.devices[0].hostname.split(".")[0] }}'
@@ -80,7 +86,7 @@
     user: "{{ ansible_user }}"
     password: "{{ ansible_password }}"
     validate_certs: false
-  when: 
+  when:
     - mgmt_vlan is defined
     - destination_platform is defined and destination_platform |lower == "velos"
   delegate_to: localhost
