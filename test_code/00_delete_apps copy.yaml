@@ -18,6 +18,7 @@
     - name: Collect BIG-IP information
       f5networks.f5_modules.bigip_device_info:
         gather_subset:
+          - as3
           - virtual-servers
           - ltm-pools
         provider: "{{ provider }}"
