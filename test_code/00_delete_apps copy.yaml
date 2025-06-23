@@ -1,6 +1,7 @@
 ---
-- name: Remove all Tenants
-  hosts: lb
+
+- name: Test Code
+  hosts: f5_destination_tenant
   connection: local
   gather_facts: false
   vars:
