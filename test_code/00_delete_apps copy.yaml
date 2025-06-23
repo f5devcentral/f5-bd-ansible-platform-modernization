@@ -22,4 +22,9 @@
           - virtual-servers
           - ltm-pools
         provider: "{{ provider }}"
+      register: info
       delegate_to: localhost
+
+    - name: debug
+      ansible.builtin.debug: 
+        var: info
