@@ -26,6 +26,6 @@
       register: info
       delegate_to: localhost
 
-    - name: debug
+    - name: Debug
       ansible.builtin.debug:
         var: info
