@@ -30,9 +30,8 @@
     #   ansible.builtin.debug:
     #     var: info
 
-    - name: Modify Port of the Virtual Server
+    - name: UPDATE A VIRTUAL SERVER
       f5networks.f5_modules.bigip_virtual_server:
-        name: test2-vs
-        port: 8080
         provider: "{{ provider }}"
-      delegate_to: localhost
+        name: "test3-vs"
+        port: "8081"
