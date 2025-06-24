@@ -22,7 +22,7 @@
           - virtual-servers
           - ltm-pools
         provider: "{{ provider }}"
-        partition: "Tenant-002"
+        # partition: "Tenant-002"
       register: info
       delegate_to: localhost
 
