@@ -15,17 +15,25 @@
 
   tasks:
 
-    - name: Collect BIG-IP information
-      f5networks.f5_modules.bigip_device_info:
-        gather_subset:
-          - as3
-          - virtual-servers
-          - ltm-pools
-        provider: "{{ provider }}"
-        # partition: "Tenant-002"
-      register: info
-      delegate_to: localhost
+    # - name: Collect BIG-IP information
+    #   f5networks.f5_modules.bigip_device_info:
+    #     gather_subset:
+    #       - as3
+    #       - virtual-servers
+    #       - ltm-pools
+    #     provider: "{{ provider }}"
+    #     # partition: "Tenant-002"
+    #   register: info
+    #   delegate_to: localhost
 
-    - name: Debug
-      ansible.builtin.debug:
-        var: info
+    # - name: Debug
+    #   ansible.builtin.debug:
+    #     var: info
+
+  - name: Modify Port of the Virtual Server
+    f5networks.f5_modules.bigip_virtual_server:
+      partition: Common
+      name: test2-vs
+      port: 8080
+      provider: "{{ provider }}"
+    delegate_to: localhost
