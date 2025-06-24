@@ -33,5 +33,5 @@
     - name: UPDATE A VIRTUAL SERVER
       f5networks.f5_modules.bigip_virtual_server:
         provider: "{{ provider }}"
-        name: "test3-vs"
+        name: "test2-vs"
         port: "8081"
