@@ -19,6 +19,7 @@
   f5networks.f5_modules.bigip_command:
     commands:
       - "show /cm sync-status"
+    provider: "{{ provider }}"
   register: sync_status
 
 - name: Extract sync Mode
