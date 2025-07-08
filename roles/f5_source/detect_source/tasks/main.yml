@@ -7,4 +7,30 @@
       - system-info
       - license
       - devices
-  register: device_info
+  register: source_device_info
+
+- name: Wait for BIG-IP to be ready
+  f5networks.f5_modules.bigip_wait:
+    delay: 5
+    provider: "{{ provider }}"
+  delegate_to: localhost
+
+- name: Run sync-status command
+  f5networks.f5_modules.bigip_command:
+    commands:
+      - "show /cm sync-status"
+  register: sync_status
+
+- name: Extract sync Mode
+  ansible.builtin.set_fact:
+    f5_sync_mode: "{{ sync_status.stdout[0] | regex_search('Mode\\s+(\\S+)', '\\1') }}"
+
+- name: Show extracted mode
+  ansible.builtin.debug:
+    var: f5_sync_mode
+
+- name: Get Failover State - Module (active or standby)
+  f5networks.f5_modules.bigip_command:
+    commands: show sys failover
+    provider: "{{ provider }}"
+  register: f5_status
