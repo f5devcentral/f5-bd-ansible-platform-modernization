@@ -25,7 +25,7 @@
 - name: Extract sync Mode
   ansible.builtin.set_fact:
     f5_sync_mode: "{{ sync_status.stdout[0] | regex_search('Mode\\s+(\\S+)', '\\1') }}"
-    f5_sync_status: "{{ sync_status.stdout[1] | regex_search('Status\\s+(\\S+)', '\\1') }}"
+    f5_sync_status: "{{ sync_status.stdout[0] | regex_search('Status\\s+(\\w+)', '\\1') }}"
 
 - name: Show extracted mode
   ansible.builtin.debug:
