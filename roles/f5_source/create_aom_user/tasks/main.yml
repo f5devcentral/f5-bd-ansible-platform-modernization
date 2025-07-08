@@ -9,6 +9,8 @@
       send -- {{ ansible_user }}\r;
       sleep 1;
       send -- {{ ansible_password }}\r;
+      sleep 1;
+      send -- {{ ansible_password }}\r;
       sleep 1;'"
     provider: "{{ provider }}"
 
