@@ -1,9 +1,9 @@
 ---
 
 - name: "Test Code Output"
-  hosts: f5_source
+  hosts: ha-pair
   connection: local
   gather_facts: false
   roles:
     - detect_source
-    - create_aom_user
+    # - create_aom_user
