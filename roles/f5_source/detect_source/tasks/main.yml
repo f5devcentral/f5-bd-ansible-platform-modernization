@@ -1,0 +1,10 @@
+---
+
+- name: Detect Hardware Model/Type
+  f5networks.f5_modules.bigip_device_info:
+    provider: "{{ provider }}"
+    gather_subset:
+      - system-info
+      - license
+      - devices
+  register: device_info
