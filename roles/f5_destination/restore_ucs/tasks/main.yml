@@ -2,7 +2,7 @@
 
 - name: Find Local UCS File Name
   ansible.builtin.find:
-    paths: /tmp/
+    paths: "{{ backup_path }}"
     patterns: "*.ucs"
   register: ucs_fetch
   delegate_to: localhost

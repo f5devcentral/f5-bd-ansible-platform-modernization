@@ -25,7 +25,7 @@
 - name: Download an existing UCS
   f5networks.f5_bigip.bigip_ucs_fetch:
     src: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
-    dest: "/tmp/{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+    dest: "{{ backup_path }}/{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
     timeout: 600
   register: ucs_backup_status
   failed_when: false

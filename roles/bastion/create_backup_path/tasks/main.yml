@@ -1,0 +1,7 @@
+---
+
+- name: Create Backup File Directory
+  ansible.builtin.file:
+    path: "{{ backup_path }}"
+    state: directory
+    mode: '0755'

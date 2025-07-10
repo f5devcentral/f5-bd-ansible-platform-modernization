@@ -5,18 +5,18 @@
     src: "{{ item }}"
     dest: "{{ item }}"
     mode: '0755'
-  with_fileglob: "/tmp/master_key_*.json"
+  with_fileglob: "{{ backup_path }}/master_key_*.json"
 
 - name: Copy Info-Inventory File from Execution Engine to Bastion
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ item }}"
     mode: '0755'
-  with_fileglob: "/tmp/inventory_*.json"
+  with_fileglob: "{{ backup_path }}/inventory_*.json"
 
 - name: Copy UCS File from Execution Engine to Bastion
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ item }}"
     mode: '0755'
-  with_fileglob: "/tmp/*.ucs"
+  with_fileglob: "{{ backup_path }}/*.ucs"

@@ -23,6 +23,7 @@
 - name: "[04] Copy Source BIG-IP Crypto-UCS Files to Bastion"
   hosts: bastion-backup
   roles:
+    - create_backup_path
     - copy_files_to_backup_host
 
 - name: "[05] Disable Source F5 (BIGSTART STOP)"

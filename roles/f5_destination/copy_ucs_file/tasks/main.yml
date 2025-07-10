@@ -2,7 +2,7 @@
 
 - name: Use find to get the files list which you want to copy/fetch
   ansible.builtin.find:
-    paths: /tmp/
+    paths: "{{ backup_path }}"
     patterns: "*.ucs"
   register: ucs_fetch
   delegate_to: localhost

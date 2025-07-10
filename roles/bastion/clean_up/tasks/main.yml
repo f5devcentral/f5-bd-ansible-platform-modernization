@@ -2,7 +2,7 @@
 
 - name: Find UCS Files
   ansible.builtin.find:
-    paths: /tmp/
+    paths: "{{ backup_path }}"
     patterns: "*.ucs"
   register: ucs_fetch
 
@@ -14,7 +14,7 @@
 
 - name: Find JSON Files
   ansible.builtin.find:
-    paths: /tmp/
+    paths: "{{ backup_path }}"
     patterns: "*.json"
   register: json_fetch
 
