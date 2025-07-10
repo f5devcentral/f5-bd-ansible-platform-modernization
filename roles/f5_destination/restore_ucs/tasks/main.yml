@@ -12,7 +12,7 @@
     seconds: 30
 
 - name: Run Restore Command with Platform-Migrate
-  ansible.builtin.command: "tmsh load /sys ucs {{ ucs_fetch.files[0].path.split('/')[2] }} no-license platform-migrate"
+  ansible.builtin.command: "tmsh load /sys ucs {{ ucs_fetch.files[0].path | basename }} no-license platform-migrate"
   register: restore_task
   changed_when: restore_task.rc != 0
 
