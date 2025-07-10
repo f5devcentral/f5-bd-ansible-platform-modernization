@@ -1,7 +1,15 @@
 ---
 
-- name: Create Backup File Directory
+- name: Create Backup File Directory (Backup Host)
   ansible.builtin.file:
     path: "{{ backup_path }}"
     state: directory
     mode: '0755'
+
+
+- name: Create Backup File Directory (Execution Engine)
+  ansible.builtin.file:
+    path: "{{ backup_path }}"
+    state: directory
+    mode: '0755'
+  delegate_to: localhost

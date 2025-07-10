@@ -1,5 +1,11 @@
 ---
 
+- name: Create Backup File Directory (Execution Engine)
+  ansible.builtin.file:
+    path: "{{ backup_path }}"
+    state: directory
+    mode: '0755'
+  
 - name: Use find to get the files list which you want to copy/fetch
   ansible.builtin.find:
     paths: "{{ backup_path }}"
