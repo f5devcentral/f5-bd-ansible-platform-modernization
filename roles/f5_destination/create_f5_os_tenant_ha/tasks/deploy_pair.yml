@@ -32,10 +32,10 @@
 - name: Pick tenant image
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_image: "{{ item }}"
-  loop: "{{ create_f5_os_tenant_ha_tenant_info.tenant_images }}"
+  loop: "{{ tenant_info.tenant_images }}"
   when:
-    - hostvars[create_f5_os_tenant_ha_pair[0]].create_f5_os_tenant_ha_build_number is defined
-    - hostvars[create_f5_os_tenant_ha_pair[0]].create_f5_os_tenant_ha_build_number in item.name
+    - build_number is defined
+    - build_number in item.name
 
 - name: Deploy tenant to VELOS chassis
   f5networks.f5os.f5os_tenant:
