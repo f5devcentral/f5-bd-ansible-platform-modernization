@@ -3,10 +3,8 @@
 - name: Load backup inventory JSON
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_inventory: >-
-      {{ lookup('file', hostvars[source_host].backup_path +
-      '/inventory_' + hostvars[source_host].inventory_hostname + '.json') | from_json }}
+      {{ lookup('file', hostvars[source_host].backup_path + '/inventory_' + source_host + '.json') | from_json }}
   delegate_to: localhost
-  when: hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname in inventory_hostname
 
 - name: Collect info from destination chassis
   f5networks.f5os.f5os_device_info:
