@@ -1,29 +1,35 @@
 # roles/copy_files_to_execution_engine/tasks/main.yml
 ---
-- name: Find master_key_*.json files to fetch
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "master_key_*.json"
-  register: file_fetch
-  delegate_to: bastion-backup
+# - name: Find master_key_*.json files to fetch
+#   ansible.builtin.find:
+#     paths: "{{ backup_path }}"
+#     patterns: "master_key_*.json"
+#   register: file_fetch
 
-- name: Find inventory_*.json files to fetch
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "inventory_*.json"
-  register: file_2_fetch
-  delegate_to: bastion-backup
+# - name: Find inventory_*.json files to fetch
+#   ansible.builtin.find:
+#     paths: "{{ backup_path }}"
+#     patterns: "inventory_*.json"
+#   register: file_2_fetch
 
-- name: Find *.ucs files to fetch
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "*.ucs"
-  register: file_3_fetch
-  delegate_to: bastion-backup
+# - name: Find *.ucs files to fetch
+#   ansible.builtin.find:
+#     paths: "{{ backup_path }}"
+#     patterns: "*.ucs"
+#   register: file_3_fetch
 
-- name: Debug files found
-  ansible.builtin.debug:
-    msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+# - name: Debug files found
+#   ansible.builtin.debug:
+#     msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+
+# - name: Fetch files from bastion-backup to Execution Engine
+#   ansible.builtin.fetch:
+#     src: "{{ item.path }}"
+#     dest: "{{ backup_path }}"
+#     flat: true
+#   loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+#   delegate_to: bastion-backup
+#   run_once: true
 
 - name: Create Backup File Directory (Execution Engine)
   ansible.builtin.file:
@@ -32,11 +38,10 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Fetch files from bastion-backup to Execution Engine
-  ansible.builtin.fetch:
-    src: "{{ item.path }}"
-    dest: "{{ backup_path }}"
-    flat: true
-  loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-  delegate_to: bastion-backup
-  run_once: true
+- name: Copy files from bastion-backup to Execution Engine using synchronize
+  ansible.builtin.synchronize:
+    src: "{{ backup_path }}/"  # Source path on remote server
+    dest: "{{ backup_path }}/"  # Destination path on local machine
+    mode: pull  # Use pull mode to get files from remote to local
+    recursive: yes
+  delegate_to: localhost
