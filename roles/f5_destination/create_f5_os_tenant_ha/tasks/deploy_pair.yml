@@ -43,13 +43,14 @@
     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
     nodes: [1]
-    mgmt_ip: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_ip }}"
-    mgmt_prefix: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_sn_cidr }}"
-    mgmt_gateway: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_gw }}"
+    mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+    mgmt_prefix: "{{ hostvars[source_host].mgmt_sn_cidr }}"
+    mgmt_gateway: "{{ hostvars[source_host].mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
-    cpu_cores: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].cpu_cores }}"
-    memory: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].memory }}"
+    cpu_cores: "{{ hostvars[source_host].cpu_cores }}"
+    memory: "{{ hostvars[source_host].memory }}"
     cryptos: enabled
-    virtual_disk_size: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].disk_size | default(120) }}"
+    virtual_disk_size: "{{ hostvars[source_host].disk_size | default(120) }}"
     running_state: configured
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
+
