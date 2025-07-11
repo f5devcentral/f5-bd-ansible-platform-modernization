@@ -1,4 +1,24 @@
 ---
+- name: Find master_key_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "master_key_*.json"
+  register: file_fetch
+  delegate_to: bastion-backup
+
+- name: Find inventory_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "inventory_*.json"
+  register: file_2_fetch
+  delegate_to: bastion-backup
+
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
+  delegate_to: bastion-backup
 
 - name: Create Backup File Directory (Execution Engine)
   ansible.builtin.file:
@@ -7,35 +27,11 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Use find to get the files list which you want to copy/fetch (master_key)
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "master_key_*.json"
-  register: file_fetch
-  delegate_to: localhost
-
-- name: Use find to get the files list which you want to copy/fetch (inventory)
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "inventory_*.json"
-  register: file_2_fetch
-  delegate_to: localhost
-
-- name: Use find to get the files list which you want to copy/fetch (*.ucs)
-  ansible.builtin.find:
-    paths: "{{ backup_path }}"
-    patterns: "*.ucs"
-  register: file_3_fetch
-  delegate_to: localhost
-
 - name: Fetch files to Execution Engine
   ansible.builtin.fetch:
     src: "{{ item.path }}"
     dest: "{{ backup_path }}"
     flat: true
-  loop:
-    - "{{ file_fetch.files }}"
-    - "{{ file_2_fetch.files }}"
-    - "{{ file_3_fetch.files }}"
-  delegate_to: bastion-backup
+  loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+  delegate_to: localhost
   run_once: true
