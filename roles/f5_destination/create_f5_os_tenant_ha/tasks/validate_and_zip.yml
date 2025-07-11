@@ -2,16 +2,16 @@
 
 - name: Fail if group lengths do not match
   ansible.builtin.fail:
-    msg: "Groups '{{ create_f5_os_tenant_ha_source_group }}' and '{{ create_f5_os_tenant_ha_destination_group }}' must have the same number of hosts"
+    msg: >
+      Groups '{{ create_f5_os_tenant_ha_source_group }}' and '{{ create_f5_os_tenant_ha_destination_group }}'
+      must have the same number of hosts.
   when: >
     groups[create_f5_os_tenant_ha_source_group] | length !=
     groups[create_f5_os_tenant_ha_destination_group] | length
-  delegate_to: localhost
 
-- name: Create paired list of source and destination hosts
+- name: Pair source and destination hosts
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_deployment_pairs: >-
-      {{ groups[create_f5_os_tenant_ha_source_group] |
-         zip(groups[create_f5_os_tenant_ha_destination_group]) |
-         map('list') | list }}
-  delegate_to: localhost
+      {{ groups[create_f5_os_tenant_ha_source_group]
+         | zip(groups[create_f5_os_tenant_ha_destination_group])
+         | map('list') | list }}
