@@ -6,6 +6,7 @@
   when: >
     groups[create_f5_os_tenant_ha_source_group] | length !=
     groups[create_f5_os_tenant_ha_destination_group] | length
+  delegate_to: localhost
 
 - name: Create paired list of source and destination hosts
   ansible.builtin.set_fact:
@@ -13,3 +14,4 @@
       {{ groups[create_f5_os_tenant_ha_source_group] |
          zip(groups[create_f5_os_tenant_ha_destination_group]) |
          map('list') | list }}
+  delegate_to: localhost
