@@ -38,6 +38,7 @@
   connection: httpapi
   gather_facts: false
   roles:
+    - copy_files_to_execution_engine
     - create_f5_os_tenant_ha
 #    - start_f5_os_tenant
 
