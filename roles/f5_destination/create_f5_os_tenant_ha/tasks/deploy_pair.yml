@@ -47,7 +47,7 @@
     mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
     cpu_cores: "{{ cpu_cores }}"
-    memory: "{{ memory }}"
+    memory: "{{ memory | int }}"
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
