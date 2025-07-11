@@ -1,4 +1,5 @@
 ---
+
 - name: Find master_key_*.json files to fetch
   ansible.builtin.find:
     paths: "{{ backup_path }}"
@@ -20,6 +21,10 @@
   register: file_3_fetch
   delegate_to: bastion-backup
 
+- name: Debug files to fetch
+  debug:
+    msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+
 - name: Create Backup File Directory (Execution Engine)
   ansible.builtin.file:
     path: "{{ backup_path }}"
@@ -33,5 +38,5 @@
     dest: "{{ backup_path }}"
     flat: true
   loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-  delegate_to: localhost
+  delegate_to: bastion-backup
   run_once: true
