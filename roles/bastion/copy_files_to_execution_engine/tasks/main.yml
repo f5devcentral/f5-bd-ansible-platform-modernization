@@ -1,4 +1,3 @@
-# roles/copy_files_to_execution_engine/tasks/main.yml
 ---
 - name: Find master_key_*.json files to fetch
   ansible.builtin.find:
@@ -22,15 +21,6 @@
   ansible.builtin.debug:
     msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
 
-# - name: Fetch files from bastion-backup to Execution Engine
-#   ansible.builtin.fetch:
-#     src: "{{ item.path }}"
-#     dest: "{{ backup_path }}"
-#     flat: true
-#   loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-#   delegate_to: bastion-backup
-#   run_once: true
-
 - name: Create Backup File Directory (Execution Engine)
   ansible.builtin.file:
     path: "{{ backup_path }}"
@@ -38,21 +28,10 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Copy specific files to the Execution Engine
+- name: Copy found files to the Execution Engine
   ansible.builtin.copy:
     src: "{{ item.path }}"
     dest: "{{ backup_path }}/"
-    remote_src: true  # Tells Ansible to pull from the remote machine
-  with_items:
-    - "{{ file_fetch.files }}"
-    - "{{ file_2_fetch.files }}"
-    - "{{ file_3_fetch.files }}"
+    remote_src: true
+  with_items: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
   delegate_to: localhost
-
-# - name: Copy files from bastion-backup to Execution Engine using synchronize
-#   ansible.posix.synchronize:
-#     src: "{{ backup_path }}/"  # Source path on remote server
-#     dest: "{{ backup_path }}/"  # Destination path on local machine
-#     mode: pull  # Use pull mode to get files from remote to local
-#     recursive: true
-#   delegate_to: localhost

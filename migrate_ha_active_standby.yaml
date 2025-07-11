@@ -35,6 +35,7 @@
 
 - name: "[04] Copy Source BIG-IP Crypto-UCS Files to EE"
   hosts: bastion-backup
+  gather_facts: false
   roles:
     - copy_files_to_execution_engine
 
