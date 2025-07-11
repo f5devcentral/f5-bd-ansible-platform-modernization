@@ -1,26 +1,26 @@
 # roles/copy_files_to_execution_engine/tasks/main.yml
 ---
-# - name: Find master_key_*.json files to fetch
-#   ansible.builtin.find:
-#     paths: "{{ backup_path }}"
-#     patterns: "master_key_*.json"
-#   register: file_fetch
+- name: Find master_key_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "master_key_*.json"
+  register: file_fetch
 
-# - name: Find inventory_*.json files to fetch
-#   ansible.builtin.find:
-#     paths: "{{ backup_path }}"
-#     patterns: "inventory_*.json"
-#   register: file_2_fetch
+- name: Find inventory_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "inventory_*.json"
+  register: file_2_fetch
 
-# - name: Find *.ucs files to fetch
-#   ansible.builtin.find:
-#     paths: "{{ backup_path }}"
-#     patterns: "*.ucs"
-#   register: file_3_fetch
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
 
-# - name: Debug files found
-#   ansible.builtin.debug:
-#     msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+- name: Debug files found
+  ansible.builtin.debug:
+    msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
 
 # - name: Fetch files from bastion-backup to Execution Engine
 #   ansible.builtin.fetch:
@@ -42,11 +42,11 @@
   ansible.builtin.copy:
     src: "{{ backup_path }}/{{ item }}"
     dest: "{{ backup_path }}/"
-    remote_src: yes  # Tells Ansible to pull from the remote machine
+    remote_src: true  # Tells Ansible to pull from the remote machine
   with_items:
-    - "master_key_*.json"
-    - "inventory_*.json"
-    - "*.ucs"
+    - "{{ file_fetch.files }}"
+    - "{{ file_2_fetch.files }}"
+    - "{{ file_3_fetch.files }}"
   delegate_to: localhost
 
 # - name: Copy files from bastion-backup to Execution Engine using synchronize
