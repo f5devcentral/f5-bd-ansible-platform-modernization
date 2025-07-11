@@ -43,13 +43,13 @@
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
     nodes: [1]
     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
-    mgmt_prefix: "{{ hostvars[source_host].mgmt_sn_cidr }}"
-    mgmt_gateway: "{{ hostvars[source_host].mgmt_gw }}"
+    mgmt_prefix: "{{ mgmt_sn_cidr }}"
+    mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
-    cpu_cores: "{{ hostvars[source_host].cpu_cores }}"
-    memory: "{{ hostvars[source_host].memory }}"
+    cpu_cores: "{{ cpu_cores }}"
+    memory: "{{ memory }}"
     cryptos: enabled
-    virtual_disk_size: "{{ hostvars[source_host].disk_size | default(120) }}"
+    virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
   delegate_to: "{{ destination_host }}"
   connection: httpapi
