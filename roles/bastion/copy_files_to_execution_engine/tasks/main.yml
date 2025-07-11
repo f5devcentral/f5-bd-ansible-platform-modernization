@@ -1,5 +1,5 @@
+# roles/copy_files_to_execution_engine/tasks/main.yml
 ---
-
 - name: Find master_key_*.json files to fetch
   ansible.builtin.find:
     paths: "{{ backup_path }}"
@@ -21,7 +21,7 @@
   register: file_3_fetch
   delegate_to: bastion-backup
 
-- name: Debug files to fetch
+- name: Debug files found
   debug:
     msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
 
@@ -32,11 +32,11 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Fetch files to Execution Engine
+- name: Fetch files from bastion-backup to Execution Engine
   ansible.builtin.fetch:
     src: "{{ item.path }}"
     dest: "{{ backup_path }}"
     flat: true
   loop: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-  delegate_to: bastion-backup
+  delegate_to: localhost
   run_once: true
