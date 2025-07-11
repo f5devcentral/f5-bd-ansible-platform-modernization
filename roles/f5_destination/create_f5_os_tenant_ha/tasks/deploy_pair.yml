@@ -29,10 +29,11 @@
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
   when: '"yes" in item.interfaces[0].tagged'
 
+
 - name: Pick tenant image
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_image: "{{ item }}"
-  loop: "{{ tenant_info.tenant_images }}"
+  loop: "{{ create_f5_os_tenant_ha_tenant_info.tenant_images }}"
   when:
     - build_number is defined
     - build_number in item.name
