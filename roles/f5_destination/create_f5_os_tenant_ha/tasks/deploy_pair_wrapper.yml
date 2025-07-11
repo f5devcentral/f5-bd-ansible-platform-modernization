@@ -1,0 +1,9 @@
+# roles/deploy_f5_tenants_to_velos/tasks/deploy_pair_wrapper.yml
+
+- name: Set source and destination hosts for this pair
+  ansible.builtin.set_fact:
+    source_host: "{{ create_f5_os_tenant_ha_pair[0] }}"
+    destination_host: "{{ create_f5_os_tenant_ha_pair[1] }}"
+
+- name: Include actual deploy task
+  ansible.builtin.include_tasks: deploy_pair.yml

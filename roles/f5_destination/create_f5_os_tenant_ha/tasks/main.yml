@@ -3,11 +3,8 @@
 - name: Validate inventory groups and build source-destination pairs
   ansible.builtin.include_tasks: validate_and_zip.yml
 
-- name: Deploy tenants across source/destination host pairs
-  ansible.builtin.include_tasks: deploy_pair.yml
+- name: Iterate over HA source-destination pairs
+  ansible.builtin.include_tasks: deploy_pair_wrapper.yml
   loop: "{{ create_f5_os_tenant_ha_deployment_pairs }}"
   loop_control:
     loop_var: create_f5_os_tenant_ha_pair
-  vars:
-    source_host: "{{ create_f5_os_tenant_ha_pair[0] }}"
-    destination_host: "{{ create_f5_os_tenant_ha_pair[1] }}"

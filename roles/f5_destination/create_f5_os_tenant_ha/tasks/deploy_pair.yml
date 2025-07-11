@@ -6,6 +6,10 @@
       {{ lookup('file', hostvars[source_host].backup_path + '/inventory_' + source_host + '.json') | from_json }}
   delegate_to: localhost
 
+- name: DEBUG - Show source host and path
+  ansible.builtin.debug:
+    msg: "Source: {{ source_host }}, Path: {{ hostvars[source_host].backup_path + '/inventory_' + source_host + '.json' }}"
+
 - name: Collect info from destination chassis
   f5networks.f5os.f5os_device_info:
     gather_subset:
