@@ -39,7 +39,7 @@
 
 - name: Deploy tenant to VELOS chassis
   f5networks.f5os.f5os_tenant:
-    name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] }}"
+    name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
     nodes: [1]
     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
