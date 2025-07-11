@@ -38,10 +38,21 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Copy files from bastion-backup to Execution Engine using synchronize
-  ansible.posix.synchronize:
-    src: "{{ backup_path }}/"  # Source path on remote server
-    dest: "{{ backup_path }}/"  # Destination path on local machine
-    mode: pull  # Use pull mode to get files from remote to local
-    recursive: true
+- name: Copy specific files to the Execution Engine
+  ansible.builtin.copy:
+    src: "{{ backup_path }}/{{ item }}"
+    dest: "{{ backup_path }}/"
+    remote_src: yes  # Tells Ansible to pull from the remote machine
+  with_items:
+    - "master_key_*.json"
+    - "inventory_*.json"
+    - "*.ucs"
   delegate_to: localhost
+
+# - name: Copy files from bastion-backup to Execution Engine using synchronize
+#   ansible.posix.synchronize:
+#     src: "{{ backup_path }}/"  # Source path on remote server
+#     dest: "{{ backup_path }}/"  # Destination path on local machine
+#     mode: pull  # Use pull mode to get files from remote to local
+#     recursive: true
+#   delegate_to: localhost
