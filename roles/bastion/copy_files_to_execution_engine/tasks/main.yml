@@ -28,10 +28,18 @@
     mode: '0755'
   delegate_to: localhost
 
-- name: Copy found files to the Execution Engine
-  ansible.builtin.copy:
+# - name: Copy found files to the Execution Engine
+#   ansible.builtin.copy:
+#     src: "{{ item.path }}"
+#     dest: "{{ backup_path }}/"
+#     remote_src: true
+#   with_items: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+#   delegate_to: localhost
+
+- name: Fetch files from bastion-backup to Execution Engine
+  ansible.builtin.fetch:
     src: "{{ item.path }}"
     dest: "{{ backup_path }}/"
-    remote_src: true
+    flat: true  # Prevent directory structure creation
   with_items: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-  delegate_to: localhost
+  delegate_to: bastion-backup  # Fetching from remote to local system
