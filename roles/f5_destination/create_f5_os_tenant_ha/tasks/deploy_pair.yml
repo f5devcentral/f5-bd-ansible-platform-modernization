@@ -1,0 +1,54 @@
+- name: Load backup JSON
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_inventory: >-
+      {{ lookup('file', hostvars[create_f5_os_tenant_ha_pair[0]].backup_path + '/inventory_' + hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname + '.json') | from_json }}
+  delegate_to: localhost
+
+- name: Get VELOS chassis info
+  f5networks.f5os.f5os_device_info:
+    gather_subset:
+      - tenant-images
+      - vlans
+  delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
+  connection: httpapi
+  register: create_f5_os_tenant_ha_tenant_info
+
+- name: Create VLANs
+  f5networks.f5os.f5os_vlan:
+    name: "vl{{ item.tag }}"
+    vlan_id: "{{ item.tag }}"
+  loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
+  when: '"yes" in item.interfaces[0].tagged'
+  delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
+  connection: httpapi
+
+- name: Build VLAN list
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_vlan_list: "{{ create_f5_os_tenant_ha_vlan_list | default([]) + [item.tag] }}"
+  loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
+  when: '"yes" in item.interfaces[0].tagged'
+
+- name: Select matching tenant image
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_image: "{{ item }}"
+  loop: "{{ create_f5_os_tenant_ha_tenant_info.tenant_images }}"
+  when:
+    - create_f5_os_tenant_ha_build_number != ''
+    - create_f5_os_tenant_ha_build_number in item.name
+
+- name: Create tenant
+  f5networks.f5os.f5os_tenant:
+    name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] }}"
+    image_name: "{{ create_f5_os_tenant_ha_image.name }}"
+    nodes: [1]
+    mgmt_ip: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_ip }}"
+    mgmt_prefix: "{{ create_f5_os_tenant_ha_mgmt_sn_cidr }}"
+    mgmt_gateway: "{{ create_f5_os_tenant_ha_mgmt_gw }}"
+    vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
+    cpu_cores: "{{ create_f5_os_tenant_ha_cpu_cores }}"
+    memory: "{{ create_f5_os_tenant_ha_memory }}"
+    cryptos: enabled
+    virtual_disk_size: "{{ create_f5_os_tenant_ha_disk_size }}"
+    running_state: configured
+  delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
+  connection: httpapi

@@ -33,13 +33,13 @@
   roles:
     - disable_f5_tmm
 
-# - name: "[06] Build and Start Destination F5"
-#   hosts: f5_destination_partition
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - create_f5_os_tenant
-#     - start_f5_os_tenant
+- name: "[06] Build and Start F5OS Instances on Multiple Velos Chassis"
+  hosts: ha_pair_destination_chassis
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - create_f5_os_tenant_ha
+#    - start_f5_os_tenant
 
 # - name: "[07] Setup and Restore Destination BIG-IP Crypto Files"
 #   hosts: f5_destination_tenant

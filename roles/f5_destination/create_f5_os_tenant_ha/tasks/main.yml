@@ -1,0 +1,8 @@
+- name: Validate groups and build deployment pairs
+  ansible.builtin.include_tasks: validate_and_zip.yml
+
+- name: Run tenant deployment for each source-destination pair
+  ansible.builtin.include_tasks: deploy_pair.yml
+  loop: "{{ create_f5_os_tenant_ha_deployment_pairs }}"
+  loop_control:
+    loop_var: create_f5_os_tenant_ha_pair
