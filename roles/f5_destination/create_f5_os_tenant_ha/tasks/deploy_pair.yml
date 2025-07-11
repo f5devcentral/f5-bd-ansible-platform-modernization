@@ -1,10 +1,13 @@
-- name: Load backup JSON
+# roles/deploy_f5_tenants_to_velos/tasks/deploy_pair.yml
+
+- name: Load backup inventory JSON
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_inventory: >-
-      {{ lookup('file', hostvars[create_f5_os_tenant_ha_pair[0]].backup_path + '/inventory_' + hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname + '.json') | from_json }}
+      {{ lookup('file', hostvars[create_f5_os_tenant_ha_pair[0]].backup_path +
+      '/inventory_' + hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname + '.json') | from_json }}
   delegate_to: localhost
 
-- name: Get VELOS chassis info
+- name: Collect info from destination chassis
   f5networks.f5os.f5os_device_info:
     gather_subset:
       - tenant-images
@@ -13,7 +16,7 @@
   connection: httpapi
   register: create_f5_os_tenant_ha_tenant_info
 
-- name: Create VLANs
+- name: Create VLANs on chassis
   f5networks.f5os.f5os_vlan:
     name: "vl{{ item.tag }}"
     vlan_id: "{{ item.tag }}"
@@ -22,33 +25,33 @@
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
   connection: httpapi
 
-- name: Build VLAN list
+- name: Generate VLAN list
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_vlan_list: "{{ create_f5_os_tenant_ha_vlan_list | default([]) + [item.tag] }}"
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
   when: '"yes" in item.interfaces[0].tagged'
 
-- name: Select matching tenant image
+- name: Pick tenant image
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_image: "{{ item }}"
   loop: "{{ create_f5_os_tenant_ha_tenant_info.tenant_images }}"
   when:
-    - create_f5_os_tenant_ha_build_number != ''
-    - create_f5_os_tenant_ha_build_number in item.name
+    - hostvars[create_f5_os_tenant_ha_pair[0]].create_f5_os_tenant_ha_build_number is defined
+    - hostvars[create_f5_os_tenant_ha_pair[0]].create_f5_os_tenant_ha_build_number in item.name
 
-- name: Create tenant
+- name: Deploy tenant to VELOS chassis
   f5networks.f5os.f5os_tenant:
     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
     nodes: [1]
     mgmt_ip: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_ip }}"
-    mgmt_prefix: "{{ create_f5_os_tenant_ha_mgmt_sn_cidr }}"
-    mgmt_gateway: "{{ create_f5_os_tenant_ha_mgmt_gw }}"
+    mgmt_prefix: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_sn_cidr }}"
+    mgmt_gateway: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
-    cpu_cores: "{{ create_f5_os_tenant_ha_cpu_cores }}"
-    memory: "{{ create_f5_os_tenant_ha_memory }}"
+    cpu_cores: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].cpu_cores }}"
+    memory: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].memory }}"
     cryptos: enabled
-    virtual_disk_size: "{{ create_f5_os_tenant_ha_disk_size }}"
+    virtual_disk_size: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].disk_size | default(120) }}"
     running_state: configured
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
   connection: httpapi

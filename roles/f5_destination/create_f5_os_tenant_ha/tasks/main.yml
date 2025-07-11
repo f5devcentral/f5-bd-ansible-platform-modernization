@@ -1,7 +1,9 @@
-- name: Validate groups and build deployment pairs
+# roles/deploy_f5_tenants_to_velos/tasks/main.yml
+
+- name: Validate group sizes and create deployment pairs
   ansible.builtin.include_tasks: validate_and_zip.yml
 
-- name: Run tenant deployment for each source-destination pair
+- name: Run deployment tasks per pair
   ansible.builtin.include_tasks: deploy_pair.yml
   loop: "{{ create_f5_os_tenant_ha_deployment_pairs }}"
   loop_control:
