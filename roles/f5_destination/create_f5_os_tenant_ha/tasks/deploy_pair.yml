@@ -13,7 +13,6 @@
       - tenant-images
       - vlans
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
-  connection: httpapi
   register: create_f5_os_tenant_ha_tenant_info
 
 - name: Create VLANs on chassis
@@ -23,7 +22,6 @@
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
   when: '"yes" in item.interfaces[0].tagged'
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
-  connection: httpapi
 
 - name: Generate VLAN list
   ansible.builtin.set_fact:
@@ -54,4 +52,3 @@
     virtual_disk_size: "{{ hostvars[create_f5_os_tenant_ha_pair[0]].disk_size | default(120) }}"
     running_state: configured
   delegate_to: "{{ create_f5_os_tenant_ha_pair[1] }}"
-  connection: httpapi
