@@ -34,7 +34,7 @@
 #     - disable_f5_tmm
 
 - name: "[04] Copy Source BIG-IP Crypto-UCS Files to EE"
-  hosts: bastion-backup
+  hosts: localhost
   roles:
     - copy_files_to_execution_engine
 
