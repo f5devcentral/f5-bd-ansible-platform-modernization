@@ -8,4 +8,4 @@
   loop: "{{ create_f5_os_tenant_ha_deployment_pairs }}"
   loop_control:
     loop_var: create_f5_os_tenant_ha_pair
-  when: hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname in inventory_hostname
+#  when: hostvars[create_f5_os_tenant_ha_pair[0]].inventory_hostname in inventory_hostname
