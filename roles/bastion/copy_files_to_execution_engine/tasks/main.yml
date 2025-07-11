@@ -40,13 +40,13 @@
 
 - name: Copy specific files to the Execution Engine
   ansible.builtin.copy:
-    src: "{{ backup_path }}/{{ item }}"
+    src: "{{ item }}"
     dest: "{{ backup_path }}/"
     remote_src: true  # Tells Ansible to pull from the remote machine
   with_items:
-    - "{{ file_fetch.files }}"
-    - "{{ file_2_fetch.files }}"
-    - "{{ file_3_fetch.files }}"
+    - "{{ file_fetch.files.path }}"
+    - "{{ file_2_fetch.files.path }}"
+    - "{{ file_3_fetch.files.path }}"
   delegate_to: localhost
 
 # - name: Copy files from bastion-backup to Execution Engine using synchronize
