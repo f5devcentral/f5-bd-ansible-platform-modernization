@@ -1,7 +1,7 @@
 ---
 
 - name: "Test Code Output"
-  hosts: ha-pair
+  hosts: ha_pair_source
   connection: local
   gather_facts: false
   roles:

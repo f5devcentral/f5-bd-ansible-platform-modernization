@@ -1,5 +1,7 @@
 # roles/deploy_f5_tenants_to_velos/tasks/deploy_pair.yml
 
+
+
 - name: Load backup inventory JSON
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_inventory: >-
