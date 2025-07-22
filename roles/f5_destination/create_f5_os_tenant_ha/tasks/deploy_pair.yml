@@ -15,6 +15,10 @@
     create_f5_os_tenant_ha_inventory: "{{ lookup('file', create_f5_os_tenant_ha_inventory_path) | from_json }}"
   delegate_to: localhost
 
+- name: DEBUG - Confirm backup path being read
+  ansible.builtin.debug:
+    msg: "Reading backup file: {{ create_f5_os_tenant_ha_inventory_path }}"
+
 - name: Collect info from destination chassis
   f5networks.f5os.f5os_device_info:
     gather_subset:
