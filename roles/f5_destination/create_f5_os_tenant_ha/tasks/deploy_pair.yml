@@ -47,9 +47,24 @@
     - hostvars[source_host].build_number is defined
     - hostvars[source_host].build_number in item.name
 
-- name: Deploy tenant to VELOS chassis
+# - name: Deploy tenant to VELOS chassis
+#   f5networks.f5os.f5os_tenant:
+#     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
+#     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
+#     nodes: [1]
+#     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+#     mgmt_prefix: "{{ mgmt_sn_cidr }}"
+#     mgmt_gateway: "{{ mgmt_gw }}"
+#     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
+#     cpu_cores: "{{ cpu_cores }}"
+#     memory: "{{ memory | int }}"
+#     cryptos: enabled
+#     virtual_disk_size: "{{ disk_size | default(120) }}"
+#     running_state: configured
+
+- name: Deploy tenant(s) to VELOS chassis
   f5networks.f5os.f5os_tenant:
-    name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
+    name: "{{ item.hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
     nodes: [1]
     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
@@ -61,3 +76,7 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
+  loop: "{{ create_f5_os_tenant_ha_inventory.devices }}"
+  loop_control:
+    label: "{{ item.hostname }}"
+  delegate_to: "{{ destination_host }}"
