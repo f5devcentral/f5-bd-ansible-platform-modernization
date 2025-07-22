@@ -39,40 +39,39 @@
   roles:
     - copy_files_to_execution_engine
 
-
 - name: "[06] Build and Start F5OS Instances on Multiple Velos Chassis"
   hosts: ha_pair_destination_chassis
   connection: httpapi
   gather_facts: false
   roles:
     - create_f5_os_tenant_ha
-#    - start_f5_os_tenant
+    - start_f5_os_tenant
 
-# - name: "[07] Setup and Restore Destination BIG-IP Crypto Files"
-#   hosts: f5_destination_tenant
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - set_admin_password_shell
-#     - restore_crypto_keys
+- name: "[07] Setup and Restore Destination BIG-IP Crypto Files"
+  hosts: ha_pair_source
+  connection: local
+  gather_facts: false
+  roles:
+    - set_admin_password_shell
+    - restore_crypto_keys
 
-# - name: "[08] Copy Source BIG-IP UCS File to Destination BIG-IP"
-#   hosts: f5_destination_tenant
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - copy_ucs_file
+- name: "[08] Copy Source BIG-IP UCS File to Destination BIG-IP"
+  hosts: ha_pair_source
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - copy_ucs_file
 
-# - name: "[09] Restore Destination BIG-IP UCS"
-#   hosts: f5_destination_tenant
-#   connection: ssh
-#   gather_facts: false
-#   roles:
-#     - restore_ucs
+- name: "[09] Restore Destination BIG-IP UCS"
+  hosts: ha_pair_source
+  connection: ssh
+  gather_facts: false
+  roles:
+    - restore_ucs
 
-# - name: "[10] Wait for UCS Restore to Complete"
-#   hosts: f5_destination_tenant
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - restore_ucs_wait
+- name: "[10] Wait for UCS Restore to Complete"
+  hosts: ha_pair_source
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - restore_ucs_wait
