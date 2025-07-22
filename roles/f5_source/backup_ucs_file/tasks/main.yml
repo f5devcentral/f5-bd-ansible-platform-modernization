@@ -32,3 +32,14 @@
   until: ucs_backup_status is success
   retries: 3
   delay: 5
+
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
+  delegate_to: localhost
+
+- name: Debug3
+  ansible.builtin.debug:
+    var: file_3_fetch
