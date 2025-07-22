@@ -79,4 +79,3 @@
   loop: "{{ create_f5_os_tenant_ha_inventory.devices }}"
   loop_control:
     label: "{{ item.hostname }}"
-  when: inventory_hostname == create_f5_os_tenant_ha_pair[1]
