@@ -62,9 +62,9 @@
 #     virtual_disk_size: "{{ disk_size | default(120) }}"
 #     running_state: configured
 
-- name: Set tenant deployment list
+- name: Set HA pair for this destination node
   ansible.builtin.set_fact:
-    create_f5_os_tenant_ha_deploy_list: "{{ create_f5_os_tenant_ha_inventory.devices }}"
+    create_f5_os_tenant_ha_pair: "{{ create_f5_os_tenant_ha_pair_map[inventory_hostname] }}"
 
 - name: Deploy tenant(s) to VELOS chassis
   f5networks.f5os.f5os_tenant:
