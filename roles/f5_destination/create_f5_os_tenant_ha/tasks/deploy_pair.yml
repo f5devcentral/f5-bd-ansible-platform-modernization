@@ -47,40 +47,40 @@
     - hostvars[source_host].build_number is defined
     - hostvars[source_host].build_number in item.name
 
-- name: Group devices by rSeries
-  ansible.builtin.set_fact:
-    create_f5_os_tenant_ha_grouped_devices: >-
-      {{
-        create_f5_os_tenant_ha_inventory.devices
-        | selectattr('rSeries', 'defined')  # Only include devices with rSeries defined
-        | groupby('rSeries')
-      }}
-  delegate_to: localhost
+# - name: Deploy tenant to VELOS chassis
+#   f5networks.f5os.f5os_tenant:
+#     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
+#     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
+#     nodes: [1]
+#     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+#     mgmt_prefix: "{{ mgmt_sn_cidr }}"
+#     mgmt_gateway: "{{ mgmt_gw }}"
+#     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
+#     cpu_cores: "{{ cpu_cores }}"
+#     memory: "{{ memory | int }}"
+#     cryptos: enabled
+#     virtual_disk_size: "{{ disk_size | default(120) }}"
+#     running_state: configured
 
-- name: DEBUG - Show grouped devices
+- name: Find matching device for source_host
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_matched_device: >-
+      {{ create_f5_os_tenant_ha_inventory.devices
+         | selectattr('management_address', '==', hostvars[source_host].ansible_host)
+         | list
+         | first }}
+  when: hostvars[source_host].ansible_host is defined
+
+- name: DEBUG - matched device
   ansible.builtin.debug:
-    msg: "Grouped devices by rSeries: {{ create_f5_os_tenant_ha_grouped_devices }}"
+    var: create_f5_os_tenant_ha_matched_device
 
-- name: Determine the rSeries of the current host
-  ansible.builtin.set_fact:
-    current_rseries: "{{ hostvars[inventory_hostname].rSeries }}"
-  when: hostvars[inventory_hostname].rSeries is defined
-
-- name: DEBUG - Show current rSeries
-  ansible.builtin.debug:
-    msg: "Current rSeries for this host: {{ current_rseries }}"
-
-- name: Select a device based on the current rSeries
-  ansible.builtin.set_fact:
-    selected_device: "{{ create_f5_os_tenant_ha_grouped_devices[current_rseries][0] }}"
-  when: current_rseries is defined
-
-- name: Deploy selected node to VELOS chassis
+- name: Deploy tenant to VELOS chassis
   f5networks.f5os.f5os_tenant:
-    name: "{{ selected_device.hostname.split('.')[0] | lower }}"
+    name: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
-    nodes: [1]  # Assuming you need to deploy this node as node 1
-    mgmt_ip: "{{ selected_device.management_address }}"
+    nodes: [1]
+    mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
     mgmt_prefix: "{{ mgmt_sn_cidr }}"
     mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
@@ -89,5 +89,4 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  delegate_to: localhost
-  when: selected_device is defined
+  when: create_f5_os_tenant_ha_matched_device is defined
