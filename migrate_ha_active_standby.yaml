@@ -1,30 +1,30 @@
 ---
 
-# - name: "[01] Bastion Backup-Cleanup"
-#   hosts: bastion-backup
-#   roles:
-#     - clean_up
-#     - create_backup_path
+- name: "[01] Bastion Backup-Cleanup"
+  hosts: bastion-backup
+  roles:
+    - clean_up
+    - create_backup_path
 
-# - name: "[02] Backup Source BIG-IP Crypto Files"
-#   hosts: ha_pair_source
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - backup_crypto_keys
-#     - backup_info_variables
+- name: "[02] Backup Source BIG-IP Crypto Files"
+  hosts: ha_pair_source
+  connection: local
+  gather_facts: false
+  roles:
+    - backup_crypto_keys
+    - backup_info_variables
 
-# - name: "[03] Backup Source BIG-IP UCS File"
-#   hosts: ha_pair_source
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - backup_ucs_file
+- name: "[03] Backup Source BIG-IP UCS File"
+  hosts: ha_pair_source
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - backup_ucs_file
 
-# - name: "[04] Copy Source BIG-IP Crypto-UCS Files to Bastion"
-#   hosts: bastion-backup
-#   roles:
-#     - copy_files_to_backup_host
+- name: "[04] Copy Source BIG-IP Crypto-UCS Files to Bastion"
+  hosts: bastion-backup
+  roles:
+    - copy_files_to_backup_host
 
 # - name: "[05] Disable Source F5 (BIGSTART STOP)"
 #   hosts: ha_pair_source
@@ -33,19 +33,19 @@
 #   roles:
 #     - disable_f5_tmm
 
-- name: "[04] Copy Source BIG-IP Crypto-UCS Files to EE"
-  hosts: bastion-backup
-  gather_facts: false
-  roles:
-    - copy_files_to_execution_engine
+## - name: "[04] Copy Source BIG-IP Crypto-UCS Files to EE"
+#   hosts: bastion-backup
+#   gather_facts: false
+#   roles:
+#     - copy_files_to_execution_engine
 
 
-- name: "[06] Build and Start F5OS Instances on Multiple Velos Chassis"
-  hosts: ha_pair_destination_chassis
-  connection: httpapi
-  gather_facts: false
-  roles:
-    - create_f5_os_tenant_ha
+# - name: "[06] Build and Start F5OS Instances on Multiple Velos Chassis"
+#   hosts: ha_pair_destination_chassis
+#   connection: httpapi
+#   gather_facts: false
+#   roles:
+#     - create_f5_os_tenant_ha
 #    - start_f5_os_tenant
 
 # - name: "[07] Setup and Restore Destination BIG-IP Crypto Files"
