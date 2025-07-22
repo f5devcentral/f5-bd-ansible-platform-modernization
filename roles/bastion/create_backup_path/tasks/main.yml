@@ -4,12 +4,12 @@
   ansible.builtin.file:
     path: "{{ backup_path }}"
     state: directory
-    mode: '0755'
+    mode: '0775'
 
 
 - name: Create Backup File Directory (Execution Engine)
   ansible.builtin.file:
     path: "{{ backup_path }}"
     state: directory
-    mode: '0755'
+    mode: '0775'
   delegate_to: localhost
