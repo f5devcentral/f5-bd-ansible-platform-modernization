@@ -52,16 +52,35 @@
     create_f5_os_tenant_ha_grouped_devices: >-
       {{
         create_f5_os_tenant_ha_inventory.devices
+        | selectattr('rSeries', 'defined')  # Only include devices with rSeries defined
         | groupby('rSeries')
       }}
   delegate_to: localhost
 
-- name: Deploy one node per rSeries to VELOS chassis
+- name: DEBUG - Show grouped devices
+  ansible.builtin.debug:
+    msg: "Grouped devices by rSeries: {{ create_f5_os_tenant_ha_grouped_devices }}"
+
+- name: Determine the rSeries of the current host
+  ansible.builtin.set_fact:
+    current_rseries: "{{ hostvars[inventory_hostname].rSeries }}"
+  when: hostvars[inventory_hostname].rSeries is defined
+
+- name: DEBUG - Show current rSeries
+  ansible.builtin.debug:
+    msg: "Current rSeries for this host: {{ current_rseries }}"
+
+- name: Select a device based on the current rSeries
+  ansible.builtin.set_fact:
+    selected_device: "{{ create_f5_os_tenant_ha_grouped_devices[current_rseries][0] }}"
+  when: current_rseries is defined
+
+- name: Deploy selected node to VELOS chassis
   f5networks.f5os.f5os_tenant:
-    name: "{{ item.hostname.split('.')[0] | lower }}"
+    name: "{{ selected_device.hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
-    nodes: [1]  # Set this to the correct node if needed
-    mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+    nodes: [1]  # Assuming you need to deploy this node as node 1
+    mgmt_ip: "{{ selected_device.management_address }}"
     mgmt_prefix: "{{ mgmt_sn_cidr }}"
     mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
@@ -70,10 +89,5 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  loop: "{{ create_f5_os_tenant_ha_inventory.devices }}"
-  loop_control:
-    label: "{{ item.hostname }}"
-  when:
-    - inventory_hostname in groups['rSeries1']  # Assuming rSeries1 has one device
-    - inventory_hostname in groups['rSeries2']  # Assuming rSeries2 has the other device
   delegate_to: localhost
+  when: selected_device is defined
