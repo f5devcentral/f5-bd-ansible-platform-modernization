@@ -6,10 +6,13 @@
   ansible.builtin.debug:
     msg: "Deploying for destination={{ inventory_hostname }} with source={{ source_host }}"
 
+- name: Set full path to backup JSON for source
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_inventory_path: "{{ hostvars[source_host].backup_path + '/inventory_' + source_host + '.json' }}"
+
 - name: Load backup inventory JSON
   ansible.builtin.set_fact:
-    create_f5_os_tenant_ha_inventory: >-
-      {{ lookup('file', hostvars[source_host].backup_path + '/inventory_' + source_host + '.json') | from_json }}
+    create_f5_os_tenant_ha_inventory: "{{ lookup('file', create_f5_os_tenant_ha_inventory_path) | from_json }}"
   delegate_to: localhost
 
 - name: Collect info from destination chassis
