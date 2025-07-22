@@ -62,6 +62,10 @@
 #     virtual_disk_size: "{{ disk_size | default(120) }}"
 #     running_state: configured
 
+- name: Set tenant deployment list
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_deploy_list: "{{ create_f5_os_tenant_ha_inventory.devices }}"
+
 - name: Deploy tenant(s) to VELOS chassis
   f5networks.f5os.f5os_tenant:
     name: "{{ item.hostname.split('.')[0] | lower }}"
@@ -76,6 +80,7 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  loop: "{{ create_f5_os_tenant_ha_inventory.devices }}"
+  loop: "{{ create_f5_os_tenant_ha_deploy_list }}"
   loop_control:
     label: "{{ item.hostname }}"
+  when: inventory_hostname == create_f5_os_tenant_ha_pair[1]
