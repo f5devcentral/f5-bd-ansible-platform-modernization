@@ -4,6 +4,7 @@
   ansible.builtin.set_fact:
     source_host: "{{ create_f5_os_tenant_ha_pair[0] }}"
     destination_host: "{{ create_f5_os_tenant_ha_pair[1] }}"
+    when: inventory_hostname in create_f5_os_tenant_ha_pair[1]
 
 - name: DEBUG - Confirm pair
   ansible.builtin.debug:
