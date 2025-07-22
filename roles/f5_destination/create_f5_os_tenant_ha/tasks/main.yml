@@ -1,10 +1,6 @@
-# roles/deploy_f5_tenants_to_velos/tasks/main.yml
-
-- name: Validate inventory groups and build source-destination pairs
+- name: Validate inventory groups and build destination → source map
   ansible.builtin.include_tasks: validate_and_zip.yml
 
-- name: Loop through deployment pairs (wrapper)
-  ansible.builtin.include_tasks: deploy_pair_wrapper.yml
-  loop: "{{ create_f5_os_tenant_ha_deployment_pairs }}"
-  loop_control:
-    loop_var: create_f5_os_tenant_ha_pair
+- name: Deploy tenant for this destination host
+  ansible.builtin.include_tasks: deploy_pair.yml
+  when: create_f5_os_tenant_ha_pair_map[inventory_hostname] is defined

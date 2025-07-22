@@ -1,17 +1,19 @@
-# roles/deploy_f5_tenants_to_velos/tasks/validate_and_zip.yml
-
-- name: Fail if group lengths do not match
+- name: Ensure group counts match
   ansible.builtin.fail:
     msg: >
-      Groups '{{ create_f5_os_tenant_ha_source_group }}' and '{{ create_f5_os_tenant_ha_destination_group }}'
-      must have the same number of hosts.
+      Groups '{{ create_f5_os_tenant_ha_source_group }}' and
+      '{{ create_f5_os_tenant_ha_destination_group }}' must have equal length.
   when: >
     groups[create_f5_os_tenant_ha_source_group] | length !=
     groups[create_f5_os_tenant_ha_destination_group] | length
 
-- name: Pair source and destination hosts
+- name: Create destination-to-source mapping
   ansible.builtin.set_fact:
-    create_f5_os_tenant_ha_deployment_pairs: >-
-      {{ groups[create_f5_os_tenant_ha_source_group]
-         | zip(groups[create_f5_os_tenant_ha_destination_group])
-         | map('list') | list }}
+    create_f5_os_tenant_ha_pair_map: >-
+      {{
+        dict(
+          groups[create_f5_os_tenant_ha_destination_group]
+          | zip(groups[create_f5_os_tenant_ha_source_group])
+        )
+      }}
+  run_once: true
