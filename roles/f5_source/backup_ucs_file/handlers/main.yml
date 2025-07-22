@@ -15,3 +15,36 @@
   retries: 30
   delay: 30
   delegate_to: localhost
+
+- name: Find master_key_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "master_key_*.json"
+  register: file_fetch
+  delegate_to: localhost
+
+- name: Debug1
+  ansible.builtin.debug:
+    var: file_fetch
+
+- name: Find inventory_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "inventory_*.json"
+  register: file_2_fetch
+  delegate_to: localhost
+
+- name: Debug2
+  ansible.builtin.debug:
+    var: file_2_fetch
+
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
+  delegate_to: localhost
+
+- name: Debug3
+  ansible.builtin.debug:
+    var: file_3_fetch

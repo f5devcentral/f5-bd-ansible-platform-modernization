@@ -6,7 +6,7 @@
     patterns: "*.ucs"
   register: ucs_fetch
 
-- name: Remove JSON Files
+- name: Remove UCS Files
   ansible.builtin.file:
     path: "{{ item.path }}"
     state: absent
