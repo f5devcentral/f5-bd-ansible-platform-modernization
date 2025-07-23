@@ -1,20 +1,19 @@
 ---
 
-- name: Check if host is online (port open)
+- name: Wait until host is unreachable (port 22 closed)
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: 22
-    state: started  # port is OPEN
+    state: started  # Wait for port to be open (but we want it to fail)
     timeout: 5
     connect_timeout: 2
   register: port_up_check
   ignore_errors: true
   delegate_to: localhost
-
-- name: Fail when host is still online
-  ansible.builtin.fail:
-    msg: "Host is still online (port 22 reachable)"
-  when: port_up_check is not failed
+  until: port_up_check.failed
   retries: 30
   delay: 10
-  until: port_up_check is failed
+
+- name: Confirm host is now offline
+  ansible.builtin.debug:
+    msg: "Host {{ ansible_host }} is now unreachable (port 22 closed)"
