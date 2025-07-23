@@ -74,4 +74,4 @@
   connection: httpapi
   gather_facts: false
   roles:
-    - restore_ucs_wait
+    - restore_ucs_wait_ha

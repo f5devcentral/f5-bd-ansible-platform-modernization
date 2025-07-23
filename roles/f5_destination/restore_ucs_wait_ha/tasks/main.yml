@@ -1,0 +1,19 @@
+---
+
+- name: Pause for 5 Minutes
+  ansible.builtin.pause:
+    minutes: 5
+
+- name: Wait For Restore to Complete and system to become Active (15 Minutes of Retries)
+  f5networks.f5_bigip.bigip_command:
+    commands: show cm failover-status
+  register: f5_online
+  until:
+    - f5_online is defined
+    - "'stdout' in f5_online"
+    - f5_online.stdout is iterable and f5_online.stdout | length > 0
+    - >
+      ('ACTIVE' in f5_online.stdout[0] or 'STANDBY' in f5_online.stdout[0])
+    - "'green' in f5_online.stdout[0]"
+  retries: 30
+  delay: 30
