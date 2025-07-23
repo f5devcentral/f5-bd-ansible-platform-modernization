@@ -30,7 +30,7 @@
       poll: 0
 
     - name: Wait for async job to finish
-      async_status:
+      ansible.builtin.async_status:
         jid: "{{ f5_online.ansible_job_id }}"
       register: f5_async_result
       until:
@@ -38,8 +38,9 @@
         - "'stdout' in f5_async_result"
         - f5_async_result.stdout is iterable and f5_async_result.stdout | length > 0
         - >
-          ('ACTIVE' in f5_async_result.stdout[0] or 'STANDBY' in f5_async_result.stdout[0])
+          ('ACTIVE' in f5_async_result.stdout[0])
+ # or 'STANDBY' in f5_async_result.stdout[0])
         - >
-          ("'green' in f5_online.stdout[0]")
+          ("'grey' in f5_online.stdout[0]" or "'green' in f5_online.stdout[0]")
       retries: 30
       delay: 30
