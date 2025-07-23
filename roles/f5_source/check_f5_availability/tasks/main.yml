@@ -1,0 +1,9 @@
+---
+
+- name: Ping Test
+  ansible.builtin.ping:
+  register: f5_avail
+  until:
+    - f5_avail is not defined
+  retries: 30
+  delay: 30

@@ -1,45 +1,19 @@
 ---
 
-# - name: "[01] Bastion Backup-Cleanup"
-#   hosts: bastion-backup
-#   roles:
-#     - clean_up
-#     - create_backup_path
+- name: "[01] Pre-Migration Wait for IPs to be available"
+  hosts: ha_pair_source
+  connection: local
+  gather_facts: false
+  roles:
+    - check_f5_availability
 
-# - name: "[02] Backup Source BIG-IP Crypto Files"
-#   hosts: ha_pair_source
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - backup_crypto_keys
-#     - backup_info_variables
-
-# - name: "[03] Backup Source BIG-IP UCS File"
-#   hosts: ha_pair_source
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - backup_ucs_file
-
-# - name: "[04] Copy Source BIG-IP Crypto-UCS Files to Bastion"
-#   hosts: bastion-backup
-#   roles:
-#     - copy_files_to_backup_host
-
-# - name: "[05] Disable Source F5 (BIGSTART STOP)"
-#   hosts: ha_pair_source
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - disable_f5_tmm
-
-- name: "[04] Copy Source BIG-IP Crypto-UCS Files to EE"
+- name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
   hosts: bastion-backup
   gather_facts: false
   roles:
     - copy_files_to_execution_engine
 
-- name: "[06] Build and Start F5OS Instances on Multiple Velos Chassis"
+- name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
   hosts: ha_pair_destination_chassis
   connection: httpapi
   gather_facts: false
@@ -47,7 +21,7 @@
     - create_f5_os_tenant_ha
     - start_f5_os_tenant_ha
 
-- name: "[07] Setup and Restore Destination BIG-IP Crypto Files"
+- name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
   hosts: ha_pair_source
   connection: local
   gather_facts: false
@@ -55,21 +29,21 @@
     - set_admin_password_shell
     - restore_crypto_keys
 
-- name: "[08] Copy Source BIG-IP UCS File to Destination BIG-IP"
+- name: "[05] Copy Source BIG-IP UCS File to Destination BIG-IP"
   hosts: ha_pair_source
   connection: httpapi
   gather_facts: false
   roles:
     - copy_ucs_file
 
-- name: "[09] Restore Destination BIG-IP UCS"
+- name: "[06] Restore Destination BIG-IP UCS"
   hosts: ha_pair_source
   connection: ssh
   gather_facts: false
   roles:
     - restore_ucs
 
-- name: "[10] Wait for UCS Restore to Complete"
+- name: "[07] Wait for UCS Restore to Complete"
   hosts: ha_pair_source
   connection: httpapi
   gather_facts: false

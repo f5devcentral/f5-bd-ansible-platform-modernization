@@ -5,5 +5,5 @@
   connection: local
   gather_facts: false
   roles:
-    - detect_source
+    - check_f5_availability
     # - create_aom_user
