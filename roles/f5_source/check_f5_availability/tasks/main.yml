@@ -1,9 +1,11 @@
 ---
 
 - name: Ping Test
-  ansible.builtin.ping:
+  ansible.netcommon.net_ping:
+    dest: "{{ ansible_host }}"
   register: f5_avail
   until:
     - f5_avail is not defined
   retries: 30
   delay: 30
+  delegate_to: localhost
