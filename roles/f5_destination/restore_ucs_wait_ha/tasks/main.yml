@@ -4,7 +4,7 @@
   ansible.builtin.pause:
     minutes: 5
 
-- name: Initialize F5 status check
+- name: Initialize F5 failover status check result
   ansible.builtin.set_fact:
     f5_status_ok: false
 
@@ -15,9 +15,10 @@
   until: f5_status_ok
   retries: "{{ max_retries }}"
   delay: "{{ retry_delay }}"
+  delegate_to: localhost
   block:
 
-    - name: Run failover-status command
+    - name: Run failover-status command on F5
       f5networks.f5_bigip.bigip_command:
         commands: show cm failover-status
       register: f5_status_result
@@ -29,10 +30,10 @@
     - name: Evaluate F5 failover status
       ansible.builtin.set_fact:
         f5_status_ok: >-
-          {{ ('ACTIVE' in f5_status_result.stdout[0] or 'STANDBY' in f5_status_result.stdout[0])
-             and ('green' in f5_status_result.stdout[0] or 'gray' in f5_status_result.stdout[0]) }}
+          {{ ('ACTIVE' in f5_status_result.stdout[0] or 'STANDBY' in f5_status_result.stdout[0]) and
+             ('green' in f5_status_result.stdout[0] or 'gray' in f5_status_result.stdout[0]) }}
 
-    - name: Debug F5 status (optional)
+    - name: Debug F5 failover output (optional)
       ansible.builtin.debug:
         msg: "{{ f5_status_result.stdout[0] }}"
 
