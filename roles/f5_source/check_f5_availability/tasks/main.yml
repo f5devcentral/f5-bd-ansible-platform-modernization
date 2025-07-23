@@ -1,12 +1,10 @@
 ---
 
 - name: Wait until device is offline (ping fails)
-  ansible.netcommon.net_ping:
-    dest: "{{ ansible_host }}"
-    count: 1
-  register: f5_avail
+  ansible.builtin.command: "ping -c 1 -W 1 {{ ansible_host }}"
+  register: ping_result
   ignore_errors: true
-  until: f5_avail.failed
+  until: ping_result.rc != 0
   retries: 30
-  delay: 30
+  delay: 10
   delegate_to: localhost
