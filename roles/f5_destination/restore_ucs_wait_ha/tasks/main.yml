@@ -40,6 +40,6 @@
         - >
           ('ACTIVE' in f5_async_result.stdout[0] or 'STANDBY' in f5_async_result.stdout[0])
         - >
-          ("'grey' in f5_online.stdout[0]" or "'green' in f5_online.stdout[0]")
+          ("'green' in f5_online.stdout[0]")
       retries: 30
       delay: 30
