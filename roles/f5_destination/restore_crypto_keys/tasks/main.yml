@@ -30,7 +30,7 @@
       run /util bash -c "f5mku -r {{ master_key_output.stdout[0] }}"
     provider: "{{ provider }}"
   register: f5_re_key
-  until: "'Rekeying' in f5_re_key.stdout[0]"
+  until: f5_re_key is defined and 'stdout' in f5_re_key and "'Rekeying' in f5_re_key.stdout[0]"
   retries: 10
   delay: 10
 
