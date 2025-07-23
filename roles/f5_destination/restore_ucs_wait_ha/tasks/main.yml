@@ -20,27 +20,51 @@
 #   delay: 30
 
 
-- name: Wait For Restore to Complete and system to become Active or Standby (with retry workaround)
+# - name: Wait For Restore to Complete and system to become Active or Standby (with retry workaround)
+#   block:
+#     - name: Run command with async to avoid persistent connection reuse
+#       f5networks.f5_bigip.bigip_command:
+#         commands: show cm failover-status
+#       register: f5_online
+#       async: 45
+#       poll: 0
+
+#     - name: Wait for async job to finish
+#       ansible.builtin.async_status:
+#         jid: "{{ f5_online.ansible_job_id }}"
+#       register: f5_async_result
+#       until:
+#         - f5_async_result.finished
+#         - "'stdout' in f5_async_result"
+#         - f5_async_result.stdout is iterable and f5_async_result.stdout | length > 0
+#         - >
+#           ('ACTIVE' in f5_async_result.stdout[0])
+#  # or 'STANDBY' in f5_async_result.stdout[0])
+#         - >
+#           ("'grey' in f5_online.stdout[0]" or "'green' in f5_online.stdout[0]")
+#       retries: 30
+#       delay: 30
+
+- name: Wait up to 15 minutes for F5 to reach ACTIVE or STANDBY state
+  vars:
+    retry_delay: 30
+    max_retries: 30
   block:
-    - name: Run command with async to avoid persistent connection reuse
+    - name: Check failover-status on F5 device
       f5networks.f5_bigip.bigip_command:
         commands: show cm failover-status
-      register: f5_online
-      async: 45
-      poll: 0
-
-    - name: Wait for async job to finish
-      ansible.builtin.async_status:
-        jid: "{{ f5_online.ansible_job_id }}"
-      register: f5_async_result
+      register: f5_status_result
+      failed_when: false
+      delegate_to: "{{ inventory_hostname }}"
+      vars:
+        ansible_connection: httpapi  # or 'network_cli' if you're using SSH-based
+      loop: "{{ range(0, max_retries) | list }}"
+      loop_control:
+        label: "Try #{{ item + 1 }}"
       until:
-        - f5_async_result.finished
-        - "'stdout' in f5_async_result"
-        - f5_async_result.stdout is iterable and f5_async_result.stdout | length > 0
-        - >
-          ('ACTIVE' in f5_async_result.stdout[0])
- # or 'STANDBY' in f5_async_result.stdout[0])
-        - >
-          ("'grey' in f5_online.stdout[0]" or "'green' in f5_online.stdout[0]")
-      retries: 30
-      delay: 30
+        - f5_status_result.stdout is defined
+        - f5_status_result.stdout | length > 0
+        - "'ACTIVE' in f5_status_result.stdout[0]"
+        - "'green' in f5_status_result.stdout[0]"
+      delay: "{{ retry_delay }}"
+      retries: 1
