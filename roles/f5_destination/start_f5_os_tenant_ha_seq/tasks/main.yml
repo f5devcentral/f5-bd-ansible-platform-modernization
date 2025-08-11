@@ -15,25 +15,29 @@
 #     msg: "Match found!"
 #   when: ansible_host == hostvars[groups['ha_pair_destination_static'][0]].ansible_host
 
-# - name: Start F5 Tenant
-#   f5networks.f5os.f5os_tenant:
-#     name: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
-#     nodes: 1
-#     running_state: deployed
-#   when: create_f5_os_tenant_ha_matched_device is defined
+- name: Start F5 Tenant
+  f5networks.f5os.f5os_tenant:
+    name: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
+    nodes: 1
+    running_state: deployed
+  when:
+    - create_f5_os_tenant_ha_matched_device is defined
+    - hostvars[item].failover_state is defined
+    - hostvars[item].failover_state |lower == 'standby'
+  loop: "{{ groups['ha_pair_source_dynamic'] }}"
 
-# - name: Wait for F5 Tenant to Show GUI Page
-#   ansible.builtin.uri:
-#     url: "https://{{ hostvars[source_host].ansible_host }}"
-#     method: GET
-#     return_content: true
-#     status_code: 200
-#     validate_certs: false
-#   register: atc_do_status
-#   until: atc_do_status is success
-#   retries: 30
-#   delay: 30
-#   delegate_to: localhost
+- name: Wait for F5 Tenant to Show GUI Page
+  ansible.builtin.uri:
+    url: "https://{{ hostvars[source_host].ansible_host }}"
+    method: GET
+    return_content: true
+    status_code: 200
+    validate_certs: false
+  register: atc_do_status
+  until: atc_do_status is success
+  retries: 30
+  delay: 30
+  delegate_to: localhost
 
 
 # - name: Deploy tenant to VELOS chassis
