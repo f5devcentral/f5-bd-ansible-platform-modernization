@@ -2,7 +2,7 @@
 
 - name: Source
   ansible.builtin.debug:
-    msg: "{{ item }} has IP {{ hostvars[item].ansible_host }}"
+    msg: "{{ item.split('.')[0] | lower }} has IP {{ hostvars[item].ansible_host }}"
   loop: "{{ groups['ha_pair_source_dynamic'] }}"
 
 - name: Dest
