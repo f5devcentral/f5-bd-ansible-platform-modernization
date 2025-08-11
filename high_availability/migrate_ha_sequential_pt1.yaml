@@ -12,7 +12,6 @@
   gather_facts: false
   roles:
     - backup_crypto_keys
-    - identify_standby_active
     - backup_info_variables
 
 - name: "[03] Backup Source BIG-IP UCS File (Standby/Active) - Phase 1 - Standby"
