@@ -1,0 +1,28 @@
+---
+
+- name: "[01] Bastion Backup-Cleanup"
+  hosts: bastion-backup
+  roles:
+    - clean_up
+    - create_backup_path
+
+- name: "[02] Backup Source (Standby/Active) BIG-IP Crypto Files"
+  hosts: ha_pair_source
+  connection: local
+  gather_facts: false
+  roles:
+    - backup_crypto_keys
+    - identify_standby_active
+    - backup_info_variables
+
+- name: "[03] Backup Source BIG-IP UCS File (Standby/Active) - Phase 1 - Standby"
+  hosts: ha_pair_source
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - backup_ucs_file
+
+- name: "[04] Copy Source (Standby/Active) BIG-IP Crypto-UCS Files to Bastion - Phase 1 - Standby"
+  hosts: bastion-backup
+  roles:
+    - copy_files_to_backup_host

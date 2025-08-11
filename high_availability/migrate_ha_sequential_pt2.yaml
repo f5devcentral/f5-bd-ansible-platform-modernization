@@ -1,0 +1,58 @@
+---
+
+- name: "[00] Find Standby Unit and Create Dynamic Group"
+  hosts: ha_pair_source
+  connection: local
+  gather_facts: false
+  roles:
+    - find_standby_unit
+
+# - name: "[01] Pre-Migration Wait for IPs to be available"
+#   hosts: ha_pair_source_standby
+#   connection: local
+#   gather_facts: false
+#   roles:
+#     - check_f5_availability
+
+# - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
+#   hosts: bastion-backup
+#   gather_facts: false
+#   roles:
+#     - copy_files_to_execution_engine
+
+# - name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
+#   hosts: ha_pair_destination_chassis
+#   connection: httpapi
+#   gather_facts: false
+#   roles:
+#     - create_f5_os_tenant_ha
+#     - start_f5_os_tenant_ha
+
+# - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
+#   hosts: ha_pair_source
+#   connection: local
+#   gather_facts: false
+#   roles:
+#     - set_admin_password_shell
+#     - restore_crypto_keys
+
+# - name: "[05] Copy Source BIG-IP UCS File to Destination BIG-IP"
+#   hosts: ha_pair_source
+#   connection: httpapi
+#   gather_facts: false
+#   roles:
+#     - copy_ucs_file
+
+# - name: "[06] Restore Destination BIG-IP UCS"
+#   hosts: ha_pair_source
+#   connection: ssh
+#   gather_facts: false
+#   roles:
+#     - restore_ucs
+
+# - name: "[07] Wait for UCS Restore to Complete"
+#   hosts: ha_pair_source
+#   connection: httpapi
+#   gather_facts: false
+#   roles:
+#     - restore_ucs_wait_ha

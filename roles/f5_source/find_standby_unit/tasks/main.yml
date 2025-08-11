@@ -1,0 +1,12 @@
+---
+
+- name: Import Information From JSON File
+  ansible.builtin.set_fact:
+    inventory: "{{ lookup('file', item) | from_json }}"
+  with_fileglob: "{{ backup_path }}/inventory_*.json"
+  delegate_to: localhost
+
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
+  loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
