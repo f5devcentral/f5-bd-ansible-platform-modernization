@@ -23,19 +23,21 @@
         name: "check_f5_availability"
       when: failover_state | lower == 'standby'
 
-# - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
-#   hosts: bastion-backup
-#   gather_facts: false
-#   roles:
-#     - copy_files_to_execution_engine
+- name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
+  hosts: ha_pair_destination_chassis
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Include dynamic role if standby
+      ansible.builtin.include_role:
+        name: "create_f5_os_tenant_ha"
+      when: failover_state | lower == 'standby'
 
-# - name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
-#   hosts: ha_pair_destination_chassis
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - create_f5_os_tenant_ha
-#     - start_f5_os_tenant_ha
+    - name: Include dynamic role if standby
+      ansible.builtin.include_role:
+        name: "start_f5_os_tenant_ha"
+      when: failover_state | lower == 'standby'      
+
 
 # - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
 #   hosts: ha_pair_source
