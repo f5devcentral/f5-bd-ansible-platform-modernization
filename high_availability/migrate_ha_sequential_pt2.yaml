@@ -31,31 +31,47 @@
     - create_f5_os_tenant_ha
     - start_f5_os_tenant_ha_seq
 
-# - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
-#   hosts: ha_pair_source
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - set_admin_password_shell
-#     - restore_crypto_keys
+- name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
+  hosts: ha_pair_source_dynamic
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Set Admin Password and Shell
+      ansible.builtin.include_role:
+        name: "set_admin_password_shell"
+      when: failover_state | lower == 'standby'
 
-# - name: "[05] Copy Source BIG-IP UCS File to Destination BIG-IP"
-#   hosts: ha_pair_source
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - copy_ucs_file
+    - name: Restore Crypto Keys
+      ansible.builtin.include_role:
+        name: "restore_crypto_keys"
+      when: failover_state | lower == 'standby'
 
-# - name: "[06] Restore Destination BIG-IP UCS"
-#   hosts: ha_pair_source
-#   connection: ssh
-#   gather_facts: false
-#   roles:
-#     - restore_ucs
+- name: "[05] Copy Source BIG-IP UCS File to Destination BIG-IP"
+  hosts: ha_pair_source_dynamic
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Set Admin Password and Shell
+      ansible.builtin.include_role:
+        name: "copy_ucs_file"
+      when: failover_state | lower == 'standby'
 
-# - name: "[07] Wait for UCS Restore to Complete"
-#   hosts: ha_pair_source
-#   connection: httpapi
-#   gather_facts: false
-#   roles:
-#     - restore_ucs_wait_ha
+- name: "[06] Restore Destination BIG-IP UCS"
+  hosts: ha_pair_source_dynamic
+  connection: ssh
+  gather_facts: false
+  tasks:
+    - name: Set Admin Password and Shell
+      ansible.builtin.include_role:
+        name: "restore_ucs"
+      when: failover_state | lower == 'standby'
+
+- name: "[07] Wait for UCS Restore to Complete"
+  hosts: ha_pair_source_dynamic
+  connection: httpapi
+  gather_facts: false
+  tasks:
+    - name: Set Admin Password and Shell
+      ansible.builtin.include_role:
+        name: "restore_ucs_wait_ha"
+      when: failover_state | lower == 'standby'
