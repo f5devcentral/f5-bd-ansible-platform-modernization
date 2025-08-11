@@ -1,2 +1,2 @@
 create_f5_os_tenant_ha_seq_source_group: ha_pair_source_dynamic
-create_f5_os_tenant_ha_seq_estination_group: ha_pair_destination_chassis
+create_f5_os_tenant_ha_seq_destination_group: ha_pair_destination_chassis
