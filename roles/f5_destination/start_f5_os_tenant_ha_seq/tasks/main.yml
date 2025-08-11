@@ -2,11 +2,13 @@
 
 - name: Source
   ansible.builtin.debug:
-    msg: "{{ hostvars[source_host].inventory_hostname }}"
+    msg: "{{ item.ansible_host }}"
+  loop: "{{ hostvars[groups['ha_pair_source_dynamic']] }}"
 
 - name: Dest
   ansible.builtin.debug:
     msg: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
+
 
 # - name: Check if IPs match
 #   ansible.builtin.debug:
