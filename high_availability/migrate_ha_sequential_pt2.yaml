@@ -7,7 +7,7 @@
     - copy_files_to_execution_engine
 
 - name: "[01] Find Standby Unit and Create Dynamic Group"
-  hosts: localhost
+  hosts: ha_pair_source
   connection: local
   gather_facts: false
   roles:

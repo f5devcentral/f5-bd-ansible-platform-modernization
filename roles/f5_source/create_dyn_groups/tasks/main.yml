@@ -13,8 +13,9 @@
 
 - name: Add VMs to dynamic ha_pair_source_dynamic
   ansible.builtin.add_host:
-    hostname: "{{ item.hostname }}"
+    hostname: "{{ inventory_hostname }}"
     ansible_host: "{{ item.management_address }}"
     failover_state: "{{ item.failover_state }}"
     groups: ha_pair_source_dynamic
   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
+  when: ansible_host == item.management_address
