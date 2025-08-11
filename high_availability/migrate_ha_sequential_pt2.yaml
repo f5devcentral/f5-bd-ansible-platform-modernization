@@ -13,12 +13,15 @@
   roles:
     - find_standby_unit
 
-# - name: "[01] Pre-Migration Wait for IPs to be available"
-#   hosts: ha_pair_source_dynamic
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - check_f5_availability
+- name: "[02] Pre-Migration Wait for IPs to be available"
+  hosts: ha_pair_source_dynamic
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Include dynamic role if standby
+      ansible.builtin.include_role:
+        name: "find_standby_unit"
+      when: failover_state | lower == 'standby'
 
 # - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
 #   hosts: bastion-backup
