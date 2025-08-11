@@ -24,6 +24,7 @@
     - create_f5_os_tenant_ha_matched_device is defined
     - hostvars[item].failover_state is defined
     - hostvars[item].failover_state |lower == 'standby'
+    - item.split('.')[0] | lower == create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower
   loop: "{{ groups['ha_pair_source_dynamic'] }}"
 
 - name: Wait for F5 Tenant to Show GUI Page
