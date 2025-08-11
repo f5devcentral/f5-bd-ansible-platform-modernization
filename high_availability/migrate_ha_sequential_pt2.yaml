@@ -11,14 +11,14 @@
   connection: local
   gather_facts: false
   roles:
-    - find_standby_unit
+    - create_dyn_groups
 
 - name: "[02] Pre-Migration Wait for IPs to be available"
   hosts: ha_pair_source_dynamic
   connection: local
   gather_facts: false
   tasks:
-    - name: Include dynamic role if standby
+    - name: Check if Standby Unit is online
       ansible.builtin.include_role:
         name: "check_f5_availability"
       when: failover_state | lower == 'standby'
@@ -27,17 +27,9 @@
   hosts: ha_pair_destination_chassis
   connection: httpapi
   gather_facts: false
-  tasks:
-    - name: Include dynamic role if standby
-      ansible.builtin.include_role:
-        name: "create_f5_os_tenant_ha"
-      when: failover_state | lower == 'standby'
-
-    - name: Include dynamic role if standby
-      ansible.builtin.include_role:
-        name: "start_f5_os_tenant_ha"
-      when: failover_state | lower == 'standby'      
-
+  roles:
+    - create_f5_os_tenant_ha_seq
+#    - start_f5_os_tenant_ha
 
 # - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
 #   hosts: ha_pair_source

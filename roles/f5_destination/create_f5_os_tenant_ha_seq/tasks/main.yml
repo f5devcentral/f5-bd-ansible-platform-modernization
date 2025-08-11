@@ -1,0 +1,6 @@
+- name: Validate inventory groups and build destination → source map
+  ansible.builtin.include_tasks: validate_and_zip.yml
+
+- name: Deploy tenant for this destination host
+  ansible.builtin.include_tasks: deploy_pair.yml
+  when: create_f5_os_tenant_ha_seq_pair_map[inventory_hostname] is defined

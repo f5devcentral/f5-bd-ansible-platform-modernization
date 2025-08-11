@@ -1,0 +1,19 @@
+- name: Ensure group counts match
+  ansible.builtin.fail:
+    msg: >
+      Groups '{{ create_f5_os_tenant_ha_seq_source_group }}' and
+      '{{ create_f5_os_tenant_ha_seq_destination_group }}' must have equal length.
+  when: >
+    groups[create_f5_os_tenant_ha_seq_source_group] | length !=
+    groups[create_f5_os_tenant_ha_seq_destination_group] | length
+
+- name: Create destination-to-source mapping
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_pair_map: >-
+      {{
+        dict(
+          groups[create_f5_os_tenant_ha_seq_destination_group]
+          | zip(groups[create_f5_os_tenant_ha_seq_source_group])
+        )
+      }}
+  run_once: true

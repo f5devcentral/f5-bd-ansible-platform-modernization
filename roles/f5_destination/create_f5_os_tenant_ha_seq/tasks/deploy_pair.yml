@@ -1,0 +1,92 @@
+- name: Set source host for this destination
+  ansible.builtin.set_fact:
+    source_host: "{{ create_f5_os_tenant_ha_seq_pair_map[inventory_hostname] }}"
+
+- name: DEBUG - Confirm pair
+  ansible.builtin.debug:
+    msg: "Deploying for destination={{ inventory_hostname }} with source={{ source_host }}"
+
+- name: Set full path to backup JSON for source
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_inventory_path: "{{ hostvars[source_host].backup_path + '/inventory_' + source_host + '.json' }}"
+
+- name: Load backup inventory JSON
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_inventory: "{{ lookup('file', create_f5_os_tenant_ha_seq_inventory_path) | from_json }}"
+  delegate_to: localhost
+
+- name: DEBUG - Confirm backup path being read
+  ansible.builtin.debug:
+    msg: "Reading backup file: {{ create_f5_os_tenant_ha_seq_inventory_path }}"
+
+- name: Collect info from destination chassis
+  f5networks.f5os.f5os_device_info:
+    gather_subset:
+      - tenant-images
+      - vlans
+  register: create_f5_os_tenant_ha_seq_tenant_info
+
+- name: Create VLANs
+  f5networks.f5os.f5os_vlan:
+    name: "vl{{ item.tag }}"
+    vlan_id: "{{ item.tag }}"
+  loop: "{{ create_f5_os_tenant_ha_seq_inventory.vlans }}"
+  when: '"yes" in item.interfaces[0].tagged'
+
+- name: Build VLAN list
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_vlan_list: "{{ create_f5_os_tenant_ha_seq_vlan_list | default([]) + [item.tag] }}"
+  loop: "{{ create_f5_os_tenant_ha_seq_inventory.vlans }}"
+  when: '"yes" in item.interfaces[0].tagged'
+
+- name: Pick matching tenant image
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_image: "{{ item }}"
+  loop: "{{ create_f5_os_tenant_ha_seq_tenant_info.tenant_images }}"
+  when:
+    - hostvars[source_host].build_number is defined
+    - hostvars[source_host].build_number in item.name
+
+# - name: Deploy tenant to VELOS chassis
+#   f5networks.f5os.f5os_tenant:
+#     name: "{{ create_f5_os_tenant_ha_seq_inventory.devices[0].hostname.split('.')[0] | lower }}"
+#     image_name: "{{ create_f5_os_tenant_ha_seq_image.name }}"
+#     nodes: [1]
+#     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+#     mgmt_prefix: "{{ mgmt_sn_cidr }}"
+#     mgmt_gateway: "{{ mgmt_gw }}"
+#     vlans: "{{ create_f5_os_tenant_ha_seq_vlan_list }}"
+#     cpu_cores: "{{ cpu_cores }}"
+#     memory: "{{ memory | int }}"
+#     cryptos: enabled
+#     virtual_disk_size: "{{ disk_size | default(120) }}"
+#     running_state: configured
+
+- name: Find matching device for source_host
+  ansible.builtin.set_fact:
+    create_f5_os_tenant_ha_seq_matched_device: >-
+      {{ create_f5_os_tenant_ha_seq_inventory.devices
+         | selectattr('management_address', '==', hostvars[source_host].ansible_host)
+         | list
+         | first }}
+  when: hostvars[source_host].ansible_host is defined
+
+- name: DEBUG - matched device
+  ansible.builtin.debug:
+    var: create_f5_os_tenant_ha_seq_matched_device
+
+- name: Deploy tenant to VELOS chassis
+  f5networks.f5os.f5os_tenant:
+    name: "{{ create_f5_os_tenant_ha_seq_matched_device.hostname.split('.')[0] | lower }}"
+    image_name: "{{ create_f5_os_tenant_ha_seq_image.name }}"
+    nodes: [1]
+    mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
+    mgmt_prefix: "{{ mgmt_sn_cidr }}"
+    mgmt_gateway: "{{ mgmt_gw }}"
+    vlans: "{{ create_f5_os_tenant_ha_seq_vlan_list }}"
+    cpu_cores: "{{ cpu_cores }}"
+    memory: "{{ memory | int }}"
+    cryptos: enabled
+    virtual_disk_size: "{{ disk_size | default(120) }}"
+    running_state: configured
+  when: create_f5_os_tenant_ha_seq_matched_device is defined
