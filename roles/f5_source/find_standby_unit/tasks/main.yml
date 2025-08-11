@@ -10,3 +10,4 @@
   ansible.builtin.debug:
     msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
+  when: '"standby" in item.failover_state|lower'
