@@ -3,7 +3,7 @@
 - name: Source
   ansible.builtin.debug:
     msg: "{{ item.ansible_host }}"
-  loop: "{{ hostvars[groups['ha_pair_source_dynamic']] }}"
+  loop: "{{ groups['ha_pair_source_dynamic'] }}"
 
 - name: Dest
   ansible.builtin.debug:
