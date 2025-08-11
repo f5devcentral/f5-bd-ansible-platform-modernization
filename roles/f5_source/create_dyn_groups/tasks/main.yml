@@ -19,3 +19,4 @@
     groups: ha_pair_source_dynamic
   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
   when: ansible_host == item.management_address
+  delegate_to: localhost
