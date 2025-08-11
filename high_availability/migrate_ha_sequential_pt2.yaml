@@ -14,7 +14,7 @@
     - find_standby_unit
 
 # - name: "[01] Pre-Migration Wait for IPs to be available"
-#   hosts: ha_pair_source_standby
+#   hosts: ha_pair_source_dynamic
 #   connection: local
 #   gather_facts: false
 #   roles:
