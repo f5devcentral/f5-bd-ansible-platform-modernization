@@ -20,7 +20,7 @@
   tasks:
     - name: Include dynamic role if standby
       ansible.builtin.include_role:
-        name: "find_standby_unit"
+        name: "check_f5_availability"
       when: failover_state | lower == 'standby'
 
 # - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
