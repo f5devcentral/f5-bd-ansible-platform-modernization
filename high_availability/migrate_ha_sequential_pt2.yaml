@@ -29,7 +29,7 @@
   gather_facts: false
   roles:
     - create_f5_os_tenant_ha
-#    - start_f5_os_tenant_ha_seq
+    - start_f5_os_tenant_ha_seq
 
 # - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
 #   hosts: ha_pair_source
