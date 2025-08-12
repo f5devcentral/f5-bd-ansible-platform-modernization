@@ -15,6 +15,7 @@
   ansible.builtin.debug:
     msg: "The IP you are looking for is {{ hostvars[item].ansible_host }}"
   loop: "{{ groups['ha_pair_source'] }}"
+  when: hostvars[item].ansible_host == ansible_host
 
 - name: Run Restore Command with Platform-Migrate
   ansible.builtin.command: "tmsh load /sys ucs {{ item.path | basename }} no-license platform-migrate"
