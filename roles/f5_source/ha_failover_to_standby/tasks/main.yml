@@ -47,7 +47,11 @@
 
 - name: Debug
   ansible.builtin.debug:
-    var: failover_state
+    var: item.failover_state
+  loop: "{{ failover_state.devices }}"
+  when:
+    - item.name is defined
+    - inventory_hostname in item.name
 
 
 
