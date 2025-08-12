@@ -1,0 +1,24 @@
+---
+
+- name: Use find to get the files list which you want to copy/fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: ucs_fetch
+  delegate_to: localhost
+
+- name: Compare IP Address with original node
+  ansible.builtin.set_fact:
+    temp_hostname: "{{ hostvars[item].inventory_hostname }}"
+  loop: "{{ groups['ha_pair_source'] }}"
+  when: hostvars[item].ansible_host == ansible_host
+
+- name: Upload UCS
+  f5networks.f5_bigip.bigip_ucs:
+    ucs: "{{ item.path }}"
+    state: present
+  register: restore_task_upload
+  loop: "{{ ucs_fetch.files }}"
+  when:
+    - item.path is defined
+    - temp_hostname in item.path
