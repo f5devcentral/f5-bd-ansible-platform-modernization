@@ -27,12 +27,12 @@
   ansible.builtin.debug:
     var: traffic_group
 
-# - name: Trigger HA Failover
-#   f5networks.f5_modules.bigip_command:
-#     commands:
-#       - "run cm failover {{ traffic_group_name }} standby"
-#     provider: "{{ provider }}"
-#   # when: bool
+- name: Trigger HA Failover
+  f5networks.f5_modules.bigip_command:
+    commands:
+      - "run cm failover {{ traffic_group.traffic_groups.name }} standby"
+    provider: "{{ provider }}"
+  # when: bool
 
 # - name: Wait until host is unreachable (port 22 closed)
 #   ansible.builtin.wait_for:
