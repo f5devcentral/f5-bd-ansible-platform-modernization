@@ -63,7 +63,7 @@
   tasks:
     - name: Set Admin Password and Shell
       ansible.builtin.include_role:
-        name: "restore_ucs"
+        name: "restore_ucs_seq"
       when: failover_state | lower == 'standby'
 
 # - name: "[07] Wait for UCS Restore to Complete"
