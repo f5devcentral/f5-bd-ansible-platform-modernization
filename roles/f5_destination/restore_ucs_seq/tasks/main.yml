@@ -13,7 +13,7 @@
 
 - name: Compare IP Address with original node
   ansible.builtin.set_fact:
-    temp_hostname: "{{ hostvars[item] }}"
+    temp_hostname: "{{ hostvars[item].inventory_hostname }}"
   loop: "{{ groups['ha_pair_source'] }}"
   when: hostvars[item].ansible_host == ansible_host
 
