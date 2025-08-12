@@ -33,7 +33,9 @@
       - "run cm failover {{ item.name }} standby"
     provider: "{{ provider }}"
   loop: "{{ traffic_group.traffic_groups }}"
-  when: item.is_floating is defined
+  when:
+    - item.is_floating is defined
+    - item.is_floating | lower == 'yes'
 
 # - name: Wait until host is unreachable (port 22 closed)
 #   ansible.builtin.wait_for:
