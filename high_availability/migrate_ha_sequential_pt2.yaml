@@ -1,17 +1,17 @@
 ---
 
-# - name: "[00] Copy Source BIG-IP Crypto-UCS Files to EE"
-#   hosts: bastion-backup
-#   gather_facts: false
-#   roles:
-#     - copy_files_to_execution_engine
+- name: "[00] Copy Source BIG-IP Crypto-UCS Files to EE"
+  hosts: bastion-backup
+  gather_facts: false
+  roles:
+    - copy_files_to_execution_engine
 
-# - name: "[01] Find Standby Unit and Create Dynamic Group"
-#   hosts: localhost
-#   connection: local
-#   gather_facts: false
-#   roles:
-#     - create_dyn_groups
+- name: "[01] Find Standby Unit and Create Dynamic Group"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - create_dyn_groups
 
 # - name: "[02] Pre-Migration Wait for IPs to be available"
 #   hosts: ha_pair_source_dynamic
