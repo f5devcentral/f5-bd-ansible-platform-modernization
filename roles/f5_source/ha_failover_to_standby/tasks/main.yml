@@ -37,6 +37,20 @@
     - item.is_floating is defined
     - item.is_floating | lower == 'yes'
 
+- name: Collect BIG-IP information
+  f5networks.f5_modules.bigip_device_info:
+    gather_subset:
+      - devices
+    provider: "{{ provider }}"
+  delegate_to: localhost
+  register: failover_state
+
+- name: Debug
+  ansible.builtin.debug:
+    var: failover_state
+
+
+
 # - name: Wait until host is unreachable (port 22 closed)
 #   ansible.builtin.wait_for:
 #     host: "{{ ansible_host }}"
