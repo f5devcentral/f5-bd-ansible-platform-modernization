@@ -1,0 +1,30 @@
+---
+
+- name: Find Local UCS File Name
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: ucs_fetch
+  delegate_to: localhost
+
+- name: Pause for 30 seconds
+  ansible.builtin.pause:
+    seconds: 30
+
+- name: Compare IP Address with original node
+  ansible.builtin.debug:
+    msg: "The IP you are looking for is {{ hostvars[item.ansible_host] }}"
+  loop: "{{ groups['ha_pair_source'] }}"
+
+- name: Run Restore Command with Platform-Migrate
+  ansible.builtin.command: "tmsh load /sys ucs {{ item.path | basename }} no-license platform-migrate"
+  register: restore_task
+  changed_when: restore_task.rc != 0
+  loop: "{{ ucs_fetch.files }}"
+  when:
+    - item.path is defined
+    - inventory_hostname in item.path
+
+- name: Debug Output of Restore
+  ansible.builtin.debug:
+    var: restore_task
