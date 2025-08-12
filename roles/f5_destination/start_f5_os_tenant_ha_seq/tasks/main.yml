@@ -1,13 +1,13 @@
 ---
 
-- name: Source
-  ansible.builtin.debug:
-    msg: "{{ item.split('.')[0] | lower }} has IP {{ hostvars[item].ansible_host }} and its state was {{ hostvars[item].failover_state }}"
-  loop: "{{ groups['ha_pair_source_dynamic'] }}"
+# - name: Debug Source Variables
+#   ansible.builtin.debug:
+#     msg: "{{ item.split('.')[0] | lower }} has IP {{ hostvars[item].ansible_host }} and its state was {{ hostvars[item].failover_state }}"
+#   loop: "{{ groups['ha_pair_source_dynamic'] }}"
 
-- name: Dest
-  ansible.builtin.debug:
-    msg: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
+# - name: Debug Destination
+#   ansible.builtin.debug:
+#     msg: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
 
 
 # - name: Check if IPs match
