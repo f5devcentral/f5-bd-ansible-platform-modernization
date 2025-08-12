@@ -13,7 +13,7 @@
 
 - name: Compare IP Address with original node
   ansible.builtin.debug:
-    msg: "The IP you are looking for is {{ hostvars[item].item.ansible_host }}"
+    msg: "The IP you are looking for is {{ hostvars[item].ansible_host }}"
   loop: "{{ groups['ha_pair_source'] }}"
 
 - name: Run Restore Command with Platform-Migrate
