@@ -30,9 +30,10 @@
 - name: Trigger HA Failover
   f5networks.f5_modules.bigip_command:
     commands:
-      - "run cm failover {{ traffic_group.traffic_groups.name }} standby"
+      - "run cm failover {{ item.name }} standby"
     provider: "{{ provider }}"
-  # when: bool
+  loop: "{{ traffic_group.traffic_groups }}"
+  when: item.is_floating is defined
 
 # - name: Wait until host is unreachable (port 22 closed)
 #   ansible.builtin.wait_for:
