@@ -12,7 +12,7 @@
     seconds: 30
 
 - name: Compare IP Address with original node
-  ansible.builtin.debug:
+  ansible.builtin.set_fact:
     temp_hostname: "{{ hostvars[item] }}"
   loop: "{{ groups['ha_pair_source'] }}"
   when: hostvars[item].ansible_host == ansible_host
