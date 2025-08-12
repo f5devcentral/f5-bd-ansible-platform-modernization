@@ -53,7 +53,7 @@
   tasks:
     - name: Set Admin Password and Shell
       ansible.builtin.include_role:
-        name: "copy_ucs_file"
+        name: "copy_ucs_file_seq"
       when: failover_state | lower == 'standby'
 
 - name: "[06] Restore Destination BIG-IP UCS"
