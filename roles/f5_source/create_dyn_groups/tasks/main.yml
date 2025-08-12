@@ -6,6 +6,13 @@
   with_fileglob: "{{ backup_path }}/inventory_*.json"
   delegate_to: localhost
 
+- name: Pull Password to use for Dynamic Group
+  ansible.builtin.set_fact:
+    temp_pass: "{{ hostvars[item].ansible_password }}"
+    temp_user: "{{ hostvars[item].ansible_user }}"
+  loop: "{{ groups['ha_pair_source'] }}"
+
+
 - name: Debug
   ansible.builtin.debug:
     msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
@@ -15,8 +22,8 @@
   ansible.builtin.add_host:
     hostname: "{{ item.hostname }}"
     ansible_host: "{{ item.management_address }}"
-    ansible_user: "{{ ansible_user }}"
-    ansible_password: "{{ ansible_password }}"
+    ansible_user: "{{ temp_user }}"
+    ansible_password: "{{ temp_pass }}"
     failover_state: "{{ item.failover_state }}"
     groups: ha_pair_source_dynamic
   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
