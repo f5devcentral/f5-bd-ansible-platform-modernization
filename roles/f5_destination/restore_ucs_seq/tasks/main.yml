@@ -11,7 +11,7 @@
   ansible.builtin.pause:
     seconds: 30
 
-- name: Compare IP Address with original node
+- name: Store Variable for Hostname from Group
   ansible.builtin.set_fact:
     temp_hostname: "{{ hostvars[item].inventory_hostname }}"
   loop: "{{ groups['ha_pair_source'] }}"
