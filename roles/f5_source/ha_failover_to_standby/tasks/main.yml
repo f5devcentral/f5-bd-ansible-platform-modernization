@@ -11,9 +11,21 @@
     temp_inventory: "{{ lookup('file', backup_path + '/inventory_' + temp_hostname + '.json') | from_json }}"
   delegate_to: localhost
 
+- name: Collect BIG-IP information
+  f5networks.f5_modules.bigip_device_info:
+    gather_subset:
+      - traffic-groups
+    provider: "{{ provider }}"
+  delegate_to: localhost
+  register: traffic_group
+
 - name: Debug
   ansible.builtin.debug:
     var: temp_inventory
+
+- name: Debug
+  ansible.builtin.debug:
+    var: traffic_group
 
 # - name: Trigger HA Failover
 #   f5networks.f5_modules.bigip_command:
