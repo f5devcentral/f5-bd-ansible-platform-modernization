@@ -29,8 +29,8 @@
 
 - name: Trigger HA Failover
   f5networks.f5_modules.bigip_command:
-    commands:
-      - "run cm failover {{ item.name }} standby"
+    commands: >
+      run /util bash -c "tmsh run cm failover {{ item.name }} standby"
     provider: "{{ provider }}"
   loop: "{{ traffic_group.traffic_groups }}"
   when:
