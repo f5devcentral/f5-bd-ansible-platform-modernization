@@ -1,0 +1,37 @@
+---
+- name: Find master_key_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "master_key_*.json"
+  register: file_fetch
+
+- name: Find inventory_*.json files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "inventory_*.json"
+  register: file_2_fetch
+
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
+
+- name: Debug files found
+  ansible.builtin.debug:
+    msg: "Found files: {{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+
+- name: Create Backup File Directory (Execution Engine)
+  ansible.builtin.file:
+    path: "{{ backup_path }}"
+    state: directory
+    mode: '0755'
+  delegate_to: localhost
+
+- name: Fetch files from bastion-backup to Execution Engine
+  ansible.builtin.fetch:
+    src: "{{ item.path }}"
+    dest: "{{ backup_path }}/"
+    flat: true  # Prevent directory structure creation
+  with_items: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
+  delegate_to: bastion-backup  # Fetching from remote to local system

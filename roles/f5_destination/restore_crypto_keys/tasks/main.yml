@@ -3,7 +3,7 @@
 - name: Import Source BIG-IP Master Key From JSON File
   ansible.builtin.set_fact:
     master_key_output: "{{ lookup('file', item) | from_json }}"
-  with_fileglob: "/tmp/master_key_*.json"
+  with_fileglob: "{{ backup_path }}/master_key_*.json"
   delegate_to: localhost
 
 - name: Debug Source BIG-IP Master Key master_key_output.stdout
@@ -30,7 +30,7 @@
       run /util bash -c "f5mku -r {{ master_key_output.stdout[0] }}"
     provider: "{{ provider }}"
   register: f5_re_key
-  until: "'Rekeying' in f5_re_key.stdout[0]"
+  until: f5_re_key is defined and 'stdout' in f5_re_key and "'Rekeying' in f5_re_key.stdout[0]"
   retries: 10
   delay: 10
 

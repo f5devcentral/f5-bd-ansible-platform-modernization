@@ -11,6 +11,12 @@
   ansible.builtin.pause:
     seconds: 30
 
+- name: Store Variable for Hostname from Group
+  ansible.builtin.set_fact:
+    temp_hostname: "{{ hostvars[item].inventory_hostname }}"
+  loop: "{{ groups['ha_pair_source'] }}"
+  when: hostvars[item].ansible_host == ansible_host
+
 - name: Run Restore Command with Platform-Migrate
   ansible.builtin.command: "tmsh load /sys ucs {{ item.path | basename }} no-license platform-migrate"
   register: restore_task
@@ -18,7 +24,7 @@
   loop: "{{ ucs_fetch.files }}"
   when:
     - item.path is defined
-    - inventory_hostname in item.path
+    - temp_hostname in item.path
 
 - name: Debug Output of Restore
   ansible.builtin.debug:

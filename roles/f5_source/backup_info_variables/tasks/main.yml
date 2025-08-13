@@ -17,5 +17,5 @@
 - name: "Copy Inventory_Info Variable to Execution Environment File"
   ansible.builtin.copy:
     content: "{{ inventory_info | to_nice_json }}"
-    dest: "/tmp/inventory_{{ inventory_hostname }}.json"
+    dest: "{{ backup_path }}/inventory_{{ inventory_hostname }}.json"
     mode: '0755'

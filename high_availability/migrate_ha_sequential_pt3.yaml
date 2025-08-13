@@ -1,0 +1,88 @@
+---
+
+- name: "[00] Copy Source BIG-IP Crypto-UCS Files to EE"
+  hosts: bastion-backup
+  gather_facts: false
+  roles:
+    - copy_files_to_execution_engine
+
+- name: "[01] Find Active Unit and Create Dynamic Group"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - create_dyn_groups
+
+# FailOver Active Unit to Standby
+- name: "[02] Failover Active Unit to Standby"
+  hosts: ha_pair_source_dynamic
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Failover to Standby
+      ansible.builtin.include_role:
+        name: "ha_failover_to_standby"
+      when: failover_state | lower == 'active'
+
+# - name: "[03] Pre-Migration Wait for IPs to be available"
+#   hosts: ha_pair_source_dynamic
+#   connection: local
+#   gather_facts: false
+#   tasks:
+#     - name: Check if Standby Unit is online
+#       ansible.builtin.include_role:
+#         name: "check_f5_availability"
+#       when: failover_state | lower == 'standby'
+
+# - name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
+#   hosts: ha_pair_destination_chassis
+#   connection: httpapi
+#   gather_facts: false
+#   roles:
+#     - create_f5_os_tenant_ha
+#     - start_f5_os_tenant_ha_seq
+
+# - name: "[04] Setup and Restore Destination BIG-IP Crypto Files"
+#   hosts: ha_pair_source_dynamic
+#   connection: local
+#   gather_facts: false
+#   tasks:
+#     - name: Set Admin Password and Shell
+#       ansible.builtin.include_role:
+#         name: "set_admin_password_shell"
+#       when: failover_state | lower == 'standby'
+
+#     - name: Restore Crypto Keys
+#       ansible.builtin.include_role:
+#         name: "restore_crypto_keys"
+#       when: failover_state | lower == 'standby'
+
+# - name: "[05] Copy Source BIG-IP UCS File to Destination BIG-IP"
+#   hosts: ha_pair_source_dynamic
+#   connection: httpapi
+#   gather_facts: false
+#   tasks:
+#     - name: Set Admin Password and Shell
+#       ansible.builtin.include_role:
+#         name: "copy_ucs_file_seq"
+#       when: failover_state | lower == 'standby'
+
+# - name: "[06] Restore Destination BIG-IP UCS"
+#   hosts: ha_pair_source_dynamic
+#   connection: ssh
+#   gather_facts: false
+#   tasks:
+#     - name: Restore Destination BIG-IP UCS
+#       ansible.builtin.include_role:
+#         name: "restore_ucs_seq"
+#       when: failover_state | lower == 'standby'
+
+# - name: "[07] Wait for UCS Restore to Complete"
+#   hosts: ha_pair_source_dynamic
+#   connection: httpapi
+#   gather_facts: false
+#   tasks:
+#     - name: Set Admin Password and Shell
+#       ansible.builtin.include_role:
+#         name: "restore_ucs_wait_ha"
+#       when: failover_state | lower == 'standby'

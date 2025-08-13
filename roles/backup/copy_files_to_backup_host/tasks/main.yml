@@ -1,0 +1,22 @@
+---
+
+- name: Copy Master Key File from Execution Engine to Bastion
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ item }}"
+    mode: '0755'
+  with_fileglob: "{{ backup_path }}/master_key_*.json"
+
+- name: Copy Info-Inventory File from Execution Engine to Bastion
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ item }}"
+    mode: '0755'
+  with_fileglob: "{{ backup_path }}/inventory_*.json"
+
+- name: Copy UCS File from Execution Engine to Bastion
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ item }}"
+    mode: '0755'
+  with_fileglob: "{{ backup_path }}/*.ucs"

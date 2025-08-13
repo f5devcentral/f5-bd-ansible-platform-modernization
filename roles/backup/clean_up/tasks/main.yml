@@ -1,0 +1,25 @@
+---
+
+- name: Find UCS Files
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: ucs_fetch
+
+- name: Remove UCS Files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ ucs_fetch.files }}"
+
+- name: Find JSON Files
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.json"
+  register: json_fetch
+
+- name: Remove JSON Files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ json_fetch.files }}"

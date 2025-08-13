@@ -35,6 +35,6 @@
 - name: "Copy Inventory to file for {{ inventory_hostname }}"
   ansible.builtin.copy:
     content: "{{ master_key_output | to_nice_json }}"
-    dest: "/tmp/master_key_{{ inventory_hostname }}.json"
+    dest: "{{ backup_path }}/master_key_{{ inventory_hostname }}.json"
     mode: '0755'
   delegate_to: localhost

@@ -25,10 +25,21 @@
 - name: Download an existing UCS
   f5networks.f5_bigip.bigip_ucs_fetch:
     src: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
-    dest: "/tmp/{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
+    dest: "{{ backup_path }}/{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
     timeout: 600
   register: ucs_backup_status
   failed_when: false
   until: ucs_backup_status is success
   retries: 3
   delay: 5
+
+- name: Find *.ucs files to fetch
+  ansible.builtin.find:
+    paths: "{{ backup_path }}"
+    patterns: "*.ucs"
+  register: file_3_fetch
+  delegate_to: localhost
+
+- name: Debug3
+  ansible.builtin.debug:
+    var: file_3_fetch
