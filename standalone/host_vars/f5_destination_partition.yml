@@ -7,6 +7,7 @@ memory: "{{ ( 3.5 * 1024 * cpu_cores ) + 512 | int }}"
 mgmt_ip: 192.170.14.85
 mgmt_sn_cidr: 24
 mgmt_gw: 192.170.14.1
+# This is currently 
 mgmt_vlan: 3014
 
 # Imperative Provider

@@ -1,9 +1,0 @@
----
-
-- name: "Test Code Output"
-  hosts: ha_pair_source
-  connection: local
-  gather_facts: false
-  roles:
-    - detect_source
-    # - create_aom_user
