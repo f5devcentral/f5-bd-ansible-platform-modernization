@@ -21,12 +21,9 @@
     msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
 
-# - name: Add VMs to dynamic ha_pair_source_dynamic
-#   ansible.builtin.add_host:
-#     hostname: "{{ item.hostname }}"
-#     ansible_host: "{{ item.management_address }}"
-#     ansible_user: "{{ temp_user }}"
-#     ansible_password: "{{ temp_pass }}"
-#     failover_state: "{{ item.failover_state }}"
-#     groups: ha_pair_source_dynamic
-#   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
+- name: Update VMs to dynamic ha_pair_source_dynamic
+  ansible.builtin.add_host:
+    hostname: "{{ item.hostname }}"
+    failover_state: "{{ item.failover_state }}"
+    groups: ha_pair_source_dynamic
+  loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
