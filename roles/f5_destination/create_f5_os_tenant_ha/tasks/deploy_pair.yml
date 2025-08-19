@@ -47,6 +47,12 @@
     - hostvars[source_host].build_number is defined
     - hostvars[source_host].build_number in item.name
 
+- name: Collect interface and vlan information on F5OS device
+  f5networks.f5os.f5os_device_info:
+    gather_subset:
+      - tenants-info
+  register: tenant_info
+
 # - name: Deploy tenant to VELOS chassis
 #   f5networks.f5os.f5os_tenant:
 #     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
@@ -89,4 +95,5 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  when: create_f5_os_tenant_ha_matched_device is defined
+  when: 
+    - create_f5_os_tenant_ha_matched_device is defined

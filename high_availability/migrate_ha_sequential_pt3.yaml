@@ -49,16 +49,9 @@
   hosts: ha_pair_destination_chassis
   connection: httpapi
   gather_facts: false
-  tasks:
-    - name: Create Tenant OS Image
-      ansible.builtin.include_role:
-        name: "create_f5_os_tenant_ha"
-      when: failover_state | lower == 'standby'
-
-    - name: Check if Standby Unit is online
-      ansible.builtin.include_role:
-        name: "start_f5_os_tenant_ha_seq"
-      when: failover_state | lower == 'standby'
+  roles:
+    - create_f5_os_tenant_ha
+    - start_f5_os_tenant_ha_seq
 
 - name: "[06] Setup and Restore Destination BIG-IP Crypto Files"
   hosts: ha_pair_source_dynamic
