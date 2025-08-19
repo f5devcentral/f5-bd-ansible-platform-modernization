@@ -29,7 +29,7 @@
   connection: local
   gather_facts: false
   roles:
-    - create_dyn_groups
+    - update_dyn_groups
 
 # - name: "[03] Pre-Migration Wait for IPs to be available"
 #   hosts: ha_pair_source_dynamic

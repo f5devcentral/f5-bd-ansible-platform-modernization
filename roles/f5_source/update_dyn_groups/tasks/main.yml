@@ -1,0 +1,32 @@
+---
+
+- name: COLLECT BIG-IP FACTS
+  f5networks.f5_modules.bigip_device_info:
+    gather_subset:
+      - system-info
+      - devices
+      - sync-status
+    provider: "{{ provider }}"
+  register: inventory
+
+- name: Pull Password to use for Dynamic Group
+  ansible.builtin.set_fact:
+    temp_pass: "{{ hostvars[item].ansible_password }}"
+    temp_user: "{{ hostvars[item].ansible_user }}"
+  loop: "{{ groups['ha_pair_source'] }}"
+
+
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
+  loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
+
+# - name: Add VMs to dynamic ha_pair_source_dynamic
+#   ansible.builtin.add_host:
+#     hostname: "{{ item.hostname }}"
+#     ansible_host: "{{ item.management_address }}"
+#     ansible_user: "{{ temp_user }}"
+#     ansible_password: "{{ temp_pass }}"
+#     failover_state: "{{ item.failover_state }}"
+#     groups: ha_pair_source_dynamic
+#   loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
