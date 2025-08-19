@@ -53,8 +53,6 @@
     - item.name is defined
     - inventory_hostname in item.name
 
-
-
 # - name: Wait until host is unreachable (port 22 closed)
 #   ansible.builtin.wait_for:
 #     host: "{{ ansible_host }}"

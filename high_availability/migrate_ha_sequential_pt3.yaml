@@ -24,6 +24,13 @@
         name: "ha_failover_to_standby"
       when: failover_state | lower == 'active'
 
+- name: "[03] Find Current Active Unit and Update Dynamic Group"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - create_dyn_groups
+
 # - name: "[03] Pre-Migration Wait for IPs to be available"
 #   hosts: ha_pair_source_dynamic
 #   connection: local
