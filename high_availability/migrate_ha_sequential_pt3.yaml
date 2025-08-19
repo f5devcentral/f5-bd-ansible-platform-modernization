@@ -36,6 +36,10 @@
   connection: local
   gather_facts: false
   tasks:
+    - name: Debug 
+      ansible.builtin.debug:
+        var: failover_state
+        
     - name: Check if Standby Unit is online
       ansible.builtin.include_role:
         name: "check_f5_availability"
