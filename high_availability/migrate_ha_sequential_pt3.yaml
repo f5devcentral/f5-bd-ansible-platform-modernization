@@ -31,15 +31,15 @@
   roles:
     - update_dyn_groups
 
-# - name: "[03] Pre-Migration Wait for IPs to be available"
-#   hosts: ha_pair_source_dynamic
-#   connection: local
-#   gather_facts: false
-#   tasks:
-#     - name: Check if Standby Unit is online
-#       ansible.builtin.include_role:
-#         name: "check_f5_availability"
-#       when: failover_state | lower == 'standby'
+- name: "[04] Pre-Migration Wait for IPs to be available"
+  hosts: ha_pair_source_dynamic
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check if Standby Unit is online
+      ansible.builtin.include_role:
+        name: "check_f5_availability"
+      when: failover_state | lower == 'standby'
 
 # - name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
 #   hosts: ha_pair_destination_chassis

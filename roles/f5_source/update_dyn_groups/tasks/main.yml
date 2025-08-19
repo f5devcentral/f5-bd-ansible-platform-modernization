@@ -9,18 +9,6 @@
     provider: "{{ provider }}"
   register: inventory
 
-- name: Pull Password to use for Dynamic Group
-  ansible.builtin.set_fact:
-    temp_pass: "{{ hostvars[item].ansible_password }}"
-    temp_user: "{{ hostvars[item].ansible_user }}"
-  loop: "{{ groups['ha_pair_source'] }}"
-
-
-- name: Debug
-  ansible.builtin.debug:
-    msg: "{{ item.hostname }} -- {{ item.management_address }} -- {{ item.failover_state }}"
-  loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
-
 - name: Update VMs to dynamic ha_pair_source_dynamic
   ansible.builtin.add_host:
     hostname: "{{ item.hostname }}"
