@@ -25,7 +25,7 @@
       when: failover_state | lower == 'active'
 
 - name: "[03] Find Current Active Unit and Update Dynamic Group"
-  hosts: localhost
+  hosts: ha_pair_source_dynamic
   connection: local
   gather_facts: false
   roles:
