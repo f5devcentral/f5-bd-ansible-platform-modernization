@@ -80,4 +80,9 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  when: create_f5_os_tenant_ha_matched_device is defined
+  when:
+    - create_f5_os_tenant_ha_matched_device is defined
+    - hostvars[item].failover_state is defined
+    - hostvars[item].failover_state |lower == 'standby'
+    - item.split('.')[0] | lower == create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower
+  loop: "{{ groups['ha_pair_source_dynamic'] }}"
