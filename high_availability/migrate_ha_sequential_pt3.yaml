@@ -50,7 +50,7 @@
   connection: httpapi
   gather_facts: false
   roles:
-    - create_f5_os_tenant_ha
+    - create_f5_os_tenant_ha_seq
     - start_f5_os_tenant_ha_seq
 
 - name: "[06] Setup and Restore Destination BIG-IP Crypto Files"
