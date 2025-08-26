@@ -20,7 +20,7 @@
     - item.path is defined
     - inventory_hostname in item.path
   vars:
-    ansible_python_interpreter: /usr/bin/python3.8
+    ansible_python_interpreter: /usr/bin/python3
 
 - name: Debug Output of Restore
   ansible.builtin.debug:

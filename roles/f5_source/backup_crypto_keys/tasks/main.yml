@@ -6,7 +6,7 @@
       run /util bash -c "f5mku -K"
     provider: "{{ provider }}"
   vars:
-    ansible_python_interpreter: /usr/bin/python3.8
+    ansible_python_interpreter: /usr/bin/python3
   register: master_key_output
 
 - name: Debug Master Key master_key_output
@@ -29,7 +29,7 @@
       sleep 1;'"
     provider: "{{ provider }}"
   vars:
-    ansible_python_interpreter: /usr/bin/python3.8
+    ansible_python_interpreter: /usr/bin/python3
 
 - name: SAVE RUNNING CONFIG ON BIG-IP
   f5networks.f5_modules.bigip_config:
