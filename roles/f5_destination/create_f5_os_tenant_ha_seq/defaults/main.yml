@@ -1,0 +1,2 @@
+create_f5_os_tenant_ha_source_group: ha_pair_source
+create_f5_os_tenant_ha_destination_group: ha_pair_destination_chassis
