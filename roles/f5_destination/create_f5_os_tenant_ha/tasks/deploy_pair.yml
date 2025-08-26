@@ -53,9 +53,9 @@
       - tenants-info
   register: tenant_info
 
-- name: Pause
-  ansible.builtin.pause:
-    minutes: 10
+# - name: Pause
+#   ansible.builtin.pause:
+#     minutes: 10
 
 # - name: Deploy tenant to VELOS chassis
 #   f5networks.f5os.f5os_tenant:
