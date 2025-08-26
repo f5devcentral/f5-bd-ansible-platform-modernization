@@ -99,5 +99,5 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  when: 
+  when:
     - create_f5_os_tenant_ha_matched_device is defined
