@@ -40,6 +40,8 @@
   hosts: ha_pair_source
   connection: ssh
   gather_facts: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.98
   roles:
     - restore_ucs
 
