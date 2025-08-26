@@ -1,12 +1,5 @@
 ---
 
-- name: "[01] Pre-Migration Wait for IPs to be available"
-  hosts: ha_pair_source
-  connection: local
-  gather_facts: false
-  roles:
-    - check_f5_availability
-
 - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
   hosts: bastion-backup
   gather_facts: false
