@@ -1,9 +1,30 @@
 ---
 
-- name: "Test Code Output"
+- name: "[01] Pre-Migration Wait for IPs to be available"
   hosts: ha_pair_source
   connection: local
   gather_facts: false
   roles:
     - check_f5_availability
-    # - create_aom_user
+
+- name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
+  hosts: bastion-backup
+  gather_facts: false
+  roles:
+    - copy_files_to_execution_engine
+
+- name: "[06] Restore Destination BIG-IP UCS"
+  hosts: ha_pair_source
+  connection: ssh
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python
+  roles:
+    - restore_ucs
+
+- name: "[07] Wait for UCS Restore to Complete"
+  hosts: ha_pair_source
+  connection: httpapi
+  gather_facts: false
+  roles:
+    - restore_ucs_wait_ha
