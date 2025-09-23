@@ -23,16 +23,16 @@
     query_string: "[?name=='f5-service-discovery'].package_name"
   register: output2
 
-- name: Remove Previous AS3 Package
+- name: Remove Previous AS3 Package - f5-appsvcs
   f5networks.f5_modules.bigip_lx_package:
     package: "{{ output.results[0].item }}.rpm"
     provider: "{{ provider }}"
     state: absent
   when: output.results is defined
 
-- name: Remove Previous AS3 Package
+- name: Remove Previous AS3 Package - f5-service-discovery
   f5networks.f5_modules.bigip_lx_package:
-    package: "{{ output.results[0].item }}.rpm"
+    package: "{{ output2.results[0].item }}.rpm"
     provider: "{{ provider }}"
     state: absent
   when: output2.results is defined
