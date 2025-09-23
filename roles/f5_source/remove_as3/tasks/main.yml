@@ -20,3 +20,7 @@
     package: "{{ output.results[0].item }}.rpm"
     provider: "{{ provider }}"
     state: absent
+
+- name: Pause 30 Seconds
+  ansible.builtin.pause:
+    seconds: 30
