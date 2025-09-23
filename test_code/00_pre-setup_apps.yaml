@@ -1,6 +1,6 @@
 ---
 - name: AS3 100s of Apps
-  hosts: lb
+  hosts: ha_pair_source
   connection: httpapi
   gather_facts: false
 
