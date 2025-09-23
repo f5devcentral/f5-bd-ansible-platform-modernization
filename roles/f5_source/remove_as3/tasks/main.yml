@@ -7,7 +7,7 @@
       - iapplx-packages
   register: bigip_device_facts
 
-- name: "Show if AS3 Installed"
+- name: "Show if AS3 Service is Installed"
   ansible.builtin.debug:
     msg: "{{ item }}"
   loop: "{{ bigip_device_facts.iapplx_packages | json_query(query_string) }}"
@@ -15,7 +15,7 @@
     query_string: "[?name=='f5-appsvcs'].package_name"
   register: output
 
-- name: "Show if AS3 Installed"
+- name: "Show if AS3 Service Discovery is Installed"
   ansible.builtin.debug:
     msg: "{{ item }}"
   loop: "{{ bigip_device_facts.iapplx_packages | json_query(query_string) }}"
@@ -28,14 +28,14 @@
     package: "{{ output.results[0].item }}.rpm"
     provider: "{{ provider }}"
     state: absent
-  when: output.results is defined
+  when: output.results[0] is defined
 
 - name: Remove Previous AS3 Package - f5-service-discovery
   f5networks.f5_modules.bigip_lx_package:
     package: "{{ output2.results[0].item }}.rpm"
     provider: "{{ provider }}"
     state: absent
-  when: output2.results is defined
+  when: output2.results[0] is defined
 
 - name: Pause 30 Seconds
   ansible.builtin.pause:
