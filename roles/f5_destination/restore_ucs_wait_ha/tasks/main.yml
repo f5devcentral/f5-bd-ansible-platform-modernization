@@ -15,8 +15,8 @@
 
     - name: Restart services if Error returned
       ansible.builtin.shell: |
-        tmsh restart sys service restjavad
-        tmsh restart sys service restnoded
+        /usr/bin/tmsh restart sys service restjavad
+        /usr/bin/tmsh restart sys service restnoded
       when: >
         f5_online_status is failed
         or ('No start of json char found' in (f5_online_status.msg | default('')))
