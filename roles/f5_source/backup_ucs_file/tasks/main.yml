@@ -57,6 +57,6 @@
 
 - name: Debug3
   ansible.builtin.debug:
-    var: "{{ item }}"
+    var: "{{ item.path }}"
   loop: "{{ file_3_fetch.files }}"
   when: inventory_hostname in item.path
