@@ -83,7 +83,7 @@
   connection: ssh
   gather_facts: false
   tasks:
-    - name: Restore Destination BIG-IP UCS
+    - name: Restore Destination BIG-IP UCS and Pause 5 Minutes
       ansible.builtin.include_role:
         name: "restore_ucs_seq"
       when: failover_state | lower == 'standby'
@@ -93,7 +93,7 @@
   connection: httpapi
   gather_facts: false
   tasks:
-    - name: Set Admin Password and Shell
+    - name: Continue Waiting for F5 Services
       ansible.builtin.include_role:
         name: "restore_ucs_wait_ha"
       when: failover_state | lower == 'standby'
