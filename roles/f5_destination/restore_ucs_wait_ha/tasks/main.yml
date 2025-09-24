@@ -1,9 +1,5 @@
 ---
 
-- name: Pause for 5 Minutes
-  ansible.builtin.pause:
-    minutes: 5
-
 - name: Wait up to 15 minutes for F5 to reach ACTIVE or STANDBY state
   vars:
     retry_delay: 30

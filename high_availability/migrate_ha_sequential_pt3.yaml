@@ -93,6 +93,11 @@
   connection: httpapi
   gather_facts: false
   tasks:
+    - name: Pause 5 Minutes
+      ansible.builtin.include_role:
+        name: "pause_5_minutes"
+      when: failover_state | lower == 'active'
+
     - name: Continue Waiting for F5 Services
       ansible.builtin.include_role:
         name: "restore_ucs_wait_ha"
