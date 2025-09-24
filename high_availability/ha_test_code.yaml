@@ -1,4 +1,9 @@
 ---
+- name: "[00] Copy Source BIG-IP Crypto-UCS Files to EE"
+  hosts: bastion-backup
+  gather_facts: false
+  roles:
+    - copy_files_to_execution_engine
 
 - name: "[01] Find Active Unit and Create Dynamic Group"
   hosts: localhost
