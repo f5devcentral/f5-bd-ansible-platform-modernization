@@ -16,11 +16,26 @@
     src: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
     dest: "{{ inventory_hostname }}-{{ cur_date }}-{{ cur_time }}.ucs"
   register: task
-  notify: Wait for Backup Task to complete
 
 - name: Debug task
   ansible.builtin.debug:
     var: task
+
+- name: Wait for Backup Task to complete
+  ansible.builtin.uri:
+    url: "https://{{ ansible_host }}/mgmt/tm/task/sys/ucs/{{ task.task_id }}"
+    method: GET
+    return_content: true
+    status_code: 200
+    force_basic_auth: true
+    user: "{{ ansible_user }}"
+    password: "{{ ansible_password }}"
+    validate_certs: false
+  register: atc_backup_status
+  until: atc_backup_status is success
+  retries: 30
+  delay: 30
+  delegate_to: localhost
 
 - name: Download an existing UCS
   f5networks.f5_bigip.bigip_ucs_fetch:
