@@ -1,5 +1,19 @@
 ---
 
+- name: "[01] Find Active Unit and Create Dynamic Group"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - create_dyn_groups
+
+- name: "[03] Find Current Active Unit and Update Dynamic Group"
+  hosts: ha_pair_source_dynamic
+  connection: local
+  gather_facts: false
+  roles:
+    - update_dyn_groups
+
 - name: "[09] Wait for UCS Restore to Complete"
   hosts: ha_pair_source_dynamic
   connection: httpapi
