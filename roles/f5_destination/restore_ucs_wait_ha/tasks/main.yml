@@ -29,7 +29,7 @@
         or ('No start of json char found' in (f5_online_status.msg | default('')))
       delegate_to: "{{ inventory_hostname }}"
       vars:
-        ansible_connection: network_cli
+        ansible_connection: ssh
       changed_when: true
         # noqa: command-instead-of-shell no-changed-when
 
