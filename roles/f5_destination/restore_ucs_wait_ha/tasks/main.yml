@@ -30,3 +30,36 @@
           ('gray' in f5_status_result.stdout[0] or 'green' in f5_status_result.stdout[0])
       delay: "{{ retry_delay }}"
       retries: 1
+
+# - name: Wait up to 15 minutes for F5 to reach ACTIVE or STANDBY state
+#   vars:
+#     retry_delay: 30
+#     max_retries: 30
+#   block:
+
+#     - name: Check failover-status on F5 device
+#       f5networks.f5_bigip.bigip_command:
+#         commands: show cm failover-status
+#       register: f5_status_result
+#       failed_when: false
+#       delegate_to: "{{ inventory_hostname }}"
+#       vars:
+#         ansible_connection: httpapi
+#       loop: "{{ range(1, max_retries + 1) | list }}"
+#       loop_control:
+#         label: "Try #{{ item }}"
+#       retries: 1
+#       delay: "{{ retry_delay }}"
+#       until:
+#         - f5_status_result.stdout is defined
+#         - f5_status_result.stdout | length > 0
+#         - "'ACTIVE' in f5_status_result.stdout[0] or 'STANDBY' in f5_status_result.stdout[0]"
+#         - "'gray' in f5_status_result.stdout[0] or 'green' in f5_status_result.stdout[0]"
+
+#     - name: Assert device reached ACTIVE or STANDBY
+#       ansible.builtin.assert:
+#         that:
+#           - f5_status_result.stdout is defined
+#           - "'ACTIVE' in f5_status_result.stdout[0] or 'STANDBY' in f5_status_result.stdout[0]"
+#           - "'gray' in f5_status_result.stdout[0] or 'green' in f5_status_result.stdout[0]"
+#         fail_msg: "Device did not reach ACTIVE or STANDBY state within 15 minutes."
