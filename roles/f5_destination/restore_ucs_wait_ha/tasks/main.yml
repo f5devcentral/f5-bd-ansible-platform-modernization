@@ -13,24 +13,25 @@
       register: f5_online_status
       failed_when: false
 
-    - name: Restart RestNoded
-      f5networks.f5_modules.bigip_command:
-        provider: "{{ provider }}"
-        commands:
-          - 'run /util bash -c "bigstart restart restjavad restnoded"'
-      failed_when: false
+    # - name: Restart RestNoded
+    #   f5networks.f5_modules.bigip_command:
+    #     provider: "{{ provider }}"
+    #     commands:
+    #       - 'run /util bash -c "bigstart restart restjavad restnoded"'
+    #   failed_when: false
 
-    # - name: Restart services if Error returned
-    #   ansible.builtin.shell: >
-    #     bash -l -c "tmsh restart sys service restjavad"
-    #     && bash -l -c "tmsh restart sys service restnoded"
-    #   when: >
-    #     f5_online_status is failed
-    #     or ('No start of json char found' in (f5_online_status.msg | default('')))
-    #   delegate_to: "{{ inventory_hostname }}"
-    #   vars:
-    #     ansible_connection: network_cli   # use SSH instead of httpapi
-    #   # noqa: command-instead-of-shell no-changed-when
+    - name: Restart services if Error returned
+      ansible.builtin.shell: >
+        bash -l -c "tmsh restart sys service restjavad"
+        && bash -l -c "tmsh restart sys service restnoded"
+      when: >
+        f5_online_status is failed
+        or ('No start of json char found' in (f5_online_status.msg | default('')))
+      delegate_to: "{{ inventory_hostname }}"
+      vars:
+        ansible_connection: network_cli
+      changed_when: true
+        # noqa: command-instead-of-shell no-changed-when
 
     - name: Wait 60 seconds after restart
       ansible.builtin.pause:
