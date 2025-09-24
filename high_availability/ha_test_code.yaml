@@ -12,13 +12,6 @@
   roles:
     - create_dyn_groups
 
-- name: "[03] Find Current Active Unit and Update Dynamic Group"
-  hosts: ha_pair_source_dynamic
-  connection: local
-  gather_facts: false
-  roles:
-    - update_dyn_groups
-
 - name: "[09] Wait for UCS Restore to Complete"
   hosts: ha_pair_source_dynamic
   connection: httpapi
@@ -27,9 +20,9 @@
     - name: Continue Waiting for F5 Services
       ansible.builtin.include_role:
         name: "restore_ucs_wait_ha"
-      when: failover_state | lower == 'standby'
-
-    - name: Run Sync on datasync-global-dg force active to both units.
-      f5networks.f5_bigip.bigip_command:
-        commands: run cm config-sync force-full-load-push to-group datasync-global-dg
       when: failover_state | lower == 'active'
+
+    # - name: Run Sync on datasync-global-dg force active to both units.
+    #   f5networks.f5_bigip.bigip_command:
+    #     commands: run cm config-sync force-full-load-push to-group datasync-global-dg
+    #   when: failover_state | lower == 'active'
