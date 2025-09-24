@@ -14,7 +14,7 @@
       failed_when: false
 
     - name: Restart iControl REST services
-      ansible.builtin.command: "tmsh restart sys service restjavad"
+      ansible.builtin.command: /usr/bin/tmsh restart sys service restjavad
       when: >
         f5_online_status is failed
         or ('No start of json char found' in (f5_online_status.msg | default('')))
@@ -25,7 +25,7 @@
       changed_when: true
 
     - name: Restart restnoded
-      ansible.builtin.command: "tmsh restart sys service restnoded"
+      ansible.builtin.command: /usr/bin/tmsh restart sys service restnoded
       when: >
         f5_online_status is failed
         or ('No start of json char found' in (f5_online_status.msg | default('')))
