@@ -13,10 +13,10 @@
       register: f5_online_status
       failed_when: false
 
-    - name: Restart services if 503 returned
+    - name: Restart services if Error returned
       ansible.builtin.shell: |
-        bigstart restart restjavad
-        bigstart restart restnoded
+        restart sys service restjavad
+        restart sys service restnoded
       when: >
         f5_online_status is failed
         or ('No start of json char found' in (f5_online_status.msg | default('')))
@@ -28,9 +28,9 @@
     - name: Wait 60 seconds after restart
       ansible.builtin.pause:
         seconds: 60
-      when:
-        - f5_online_status.msg is defined
-        - (f5_online_status.msg.code | default(0)) == 503
+      when: >
+        f5_online_status is failed
+        or ('No start of json char found' in (f5_online_status.msg | default('')))
 
     - name: Check failover-status on F5 device
       f5networks.f5_bigip.bigip_command:
