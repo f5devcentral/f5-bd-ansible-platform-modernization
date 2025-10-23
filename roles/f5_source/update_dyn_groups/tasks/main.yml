@@ -1,0 +1,25 @@
+---
+
+- name: COLLECT BIG-IP FACTS
+  f5networks.f5_modules.bigip_device_info:
+    gather_subset:
+      - system-info
+      - devices
+      - sync-status
+    provider: "{{ provider }}"
+  register: inventory
+
+- name: Debug - Before
+  ansible.builtin.debug:
+    var: failover_state
+
+- name: Update VMs to dynamic ha_pair_source_dynamic
+  ansible.builtin.add_host:
+    hostname: "{{ item.hostname }}"
+    failover_state: "{{ item.failover_state }}"
+    groups: ha_pair_source_dynamic
+  loop: "{{ inventory.ansible_facts.ansible_net_devices }}"
+
+- name: Debug - After
+  ansible.builtin.debug:
+    var: failover_state

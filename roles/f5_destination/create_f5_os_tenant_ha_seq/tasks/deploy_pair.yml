@@ -31,13 +31,13 @@
     name: "vl{{ item.tag }}"
     vlan_id: "{{ item.tag }}"
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
-  when: '"yes" in item.interfaces[0].tagged'
+  # when: '"yes" in item.interfaces[0].tagged'
 
 - name: Build VLAN list
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_vlan_list: "{{ create_f5_os_tenant_ha_vlan_list | default([]) + [item.tag] }}"
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
-  when: '"yes" in item.interfaces[0].tagged'
+  # when: '"yes" in item.interfaces[0].tagged'
 
 - name: Pick matching tenant image
   ansible.builtin.set_fact:
@@ -52,25 +52,6 @@
     gather_subset:
       - tenants-info
   register: tenant_info
-
-# - name: Pause
-#   ansible.builtin.pause:
-#     minutes: 10
-
-# - name: Deploy tenant to VELOS chassis
-#   f5networks.f5os.f5os_tenant:
-#     name: "{{ create_f5_os_tenant_ha_inventory.devices[0].hostname.split('.')[0] | lower }}"
-#     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
-#     nodes: [1]
-#     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
-#     mgmt_prefix: "{{ mgmt_sn_cidr }}"
-#     mgmt_gateway: "{{ mgmt_gw }}"
-#     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
-#     cpu_cores: "{{ cpu_cores }}"
-#     memory: "{{ memory | int }}"
-#     cryptos: enabled
-#     virtual_disk_size: "{{ disk_size | default(120) }}"
-#     running_state: configured
 
 - name: Find matching device for source_host
   ansible.builtin.set_fact:
@@ -99,4 +80,9 @@
     cryptos: enabled
     virtual_disk_size: "{{ disk_size | default(120) }}"
     running_state: configured
-  when: create_f5_os_tenant_ha_matched_device is defined
+  when:
+    - create_f5_os_tenant_ha_matched_device is defined
+    - hostvars[item].failover_state is defined
+    - hostvars[item].failover_state |lower == 'standby'
+    - item.split('.')[0] | lower == create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower
+  loop: "{{ groups['ha_pair_source_dynamic'] }}"

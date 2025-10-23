@@ -43,32 +43,12 @@
       - devices
     provider: "{{ provider }}"
   delegate_to: localhost
-  register: failover_state
+  register: current_failover_state
 
 - name: Debug
   ansible.builtin.debug:
     var: item.failover_state
-  loop: "{{ failover_state.devices }}"
+  loop: "{{ current_failover_state.devices }}"
   when:
     - item.name is defined
     - inventory_hostname in item.name
-
-
-
-# - name: Wait until host is unreachable (port 22 closed)
-#   ansible.builtin.wait_for:
-#     host: "{{ ansible_host }}"
-#     port: 22
-#     state: started  # Wait for port to be open (but we want it to fail)
-#     timeout: 5
-#     connect_timeout: 2
-#   register: port_up_check
-#   ignore_errors: true
-#   delegate_to: localhost
-#   until: port_up_check.failed
-#   retries: 30
-#   delay: 10
-
-# - name: Confirm host is now offline
-#   ansible.builtin.debug:
-#     msg: "Host {{ ansible_host }} is now unreachable (port 22 closed)"

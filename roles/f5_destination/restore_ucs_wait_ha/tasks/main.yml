@@ -1,15 +1,39 @@
 ---
 
-- name: Pause for 5 Minutes
-  ansible.builtin.pause:
-    minutes: 5
-
-
 - name: Wait up to 15 minutes for F5 to reach ACTIVE or STANDBY state
   vars:
     retry_delay: 30
     max_retries: 30
   block:
+
+    - name: Collect BIG-IP information
+      f5networks.f5_bigip.bigip_device_info:
+        gather_subset:
+          - devices
+      register: f5_online_status
+      failed_when: false
+
+    - name: Restart iControl REST services via SSH (login shell)
+      ansible.builtin.shell: |
+        bash -lc "/usr/bin/tmsh restart sys service restjavad"
+        bash -lc "/usr/bin/tmsh restart sys service restnoded"
+        bash -lc "/usr/bin/tmsh restart sys service httpd"
+      vars:
+        ansible_connection: ssh
+        ansible_user: root
+        ansible_python_interpreter: /usr/bin/python3
+      when: >
+        f5_online_status is failed
+        or ('No start of json char found' in (f5_online_status.msg | default('')))
+      changed_when: true
+
+    - name: Wait 60 seconds after restart
+      ansible.builtin.pause:
+        seconds: 60
+      when: >
+        f5_online_status is failed
+        or ('No start of json char found' in (f5_online_status.msg | default('')))
+
     - name: Check failover-status on F5 device
       f5networks.f5_bigip.bigip_command:
         commands: show cm failover-status

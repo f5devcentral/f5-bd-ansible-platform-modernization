@@ -13,6 +13,7 @@
   roles:
     - backup_crypto_keys
     - backup_info_variables
+    - remove_as3
 
 - name: "[03] Backup Source BIG-IP UCS File (Standby/Active) - Phase 1 - Standby"
   hosts: ha_pair_source
