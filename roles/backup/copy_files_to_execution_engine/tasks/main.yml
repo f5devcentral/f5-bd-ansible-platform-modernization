@@ -34,4 +34,4 @@
     dest: "{{ backup_path }}/"
     flat: true  # Prevent directory structure creation
   with_items: "{{ file_fetch.files + file_2_fetch.files + file_3_fetch.files }}"
-  delegate_to: bastion-backup  # Fetching from remote to local system
+  delegate_to: backup-host  # Fetching from remote to local system
