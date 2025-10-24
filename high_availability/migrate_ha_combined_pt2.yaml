@@ -48,4 +48,5 @@
   connection: httpapi
   gather_facts: false
   roles:
+    - pause_5_minutes
     - restore_ucs_wait_ha
