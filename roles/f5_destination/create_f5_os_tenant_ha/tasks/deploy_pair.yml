@@ -31,13 +31,13 @@
     name: "vl{{ item.tag }}"
     vlan_id: "{{ item.tag }}"
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
-  when: '"yes" in item.interfaces[0].tagged'
+  # when: '"yes" in item.interfaces[0].tagged'
 
 - name: Build VLAN list
   ansible.builtin.set_fact:
     create_f5_os_tenant_ha_vlan_list: "{{ create_f5_os_tenant_ha_vlan_list | default([]) + [item.tag] }}"
   loop: "{{ create_f5_os_tenant_ha_inventory.vlans }}"
-  when: '"yes" in item.interfaces[0].tagged'
+  # when: '"yes" in item.interfaces[0].tagged'
 
 - name: Pick matching tenant image
   ansible.builtin.set_fact:
