@@ -17,14 +17,14 @@
 - name: Get management IP info
   f5networks.f5_modules.bigip_command:
     commands:
-      - show sys management-ip
+      - list sys management-ip
     provider: "{{ provider }}"
   register: mgmt_ip_info
 
 - name: Get management route info
   f5networks.f5_modules.bigip_command:
     commands:
-      - show sys management-route
+      - list sys management-route
     provider: "{{ provider }}"
   register: mgmt_route_info
 
