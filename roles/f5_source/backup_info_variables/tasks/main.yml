@@ -14,19 +14,25 @@
     provider: "{{ provider }}"
   register: inventory_info
 
-- name: Collect management interface info
+- name: Get management IP info
   f5networks.f5_modules.bigip_command:
     commands:
-      - list sys management-ip
-      - list sys management-route
+      - show sys management-ip
     provider: "{{ provider }}"
-  register: mgmt_info
+  register: mgmt_ip_info
 
-- name: Parse management IP, mask, and gateway
+- name: Get management route info
+  f5networks.f5_modules.bigip_command:
+    commands:
+      - show sys management-route
+    provider: "{{ provider }}"
+  register: mgmt_route_info
+
+- name: Parse management details
   ansible.builtin.set_fact:
-    mgmt_ip: "{{ mgmt_info.stdout[0] | regex_search('address (\\S+)/(\\d+)', '\\1') }}"
-    mgmt_netmask: "{{ mgmt_info.stdout[0] | regex_search('address (\\S+)/(\\d+)', '\\2') }}"
-    mgmt_gateway: "{{ mgmt_info.stdout[1] | regex_search('gateway (\\S+)', '\\1') }}"
+    mgmt_ip: "{{ mgmt_ip_info.stdout[0] | regex_search('Management IP address:\\s+(\\S+)', '\\1') }}"
+    mgmt_netmask: "{{ mgmt_ip_info.stdout[0] | regex_search('Netmask:\\s+(\\S+)', '\\1') }}"
+    mgmt_gateway: "{{ mgmt_route_info.stdout[0] | regex_search('Gateway:\\s+(\\S+)', '\\1') }}"
 
 - name: Merge management info into inventory data
   ansible.builtin.set_fact:
