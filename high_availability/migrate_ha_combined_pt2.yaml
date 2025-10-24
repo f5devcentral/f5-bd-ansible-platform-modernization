@@ -13,7 +13,7 @@
   roles:
     - copy_files_to_execution_engine
 
-- name: "[03] Build and Start F5OS Instances on Multiple Velos Chassis"
+- name: "[03] Build and Start F5OS Instances on Multiple Velos/rSeries Chassis"
   hosts: ha_pair_destination_chassis
   connection: httpapi
   gather_facts: false
