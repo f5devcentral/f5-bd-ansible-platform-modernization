@@ -8,7 +8,7 @@
     - check_f5_availability
 
 - name: "[02] Copy Source BIG-IP Crypto-UCS Files to EE"
-  hosts: bastion-backup
+  hosts: backup-host
   gather_facts: false
   roles:
     - copy_files_to_execution_engine

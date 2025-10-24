@@ -3,12 +3,6 @@ server_port: 443
 cpu_cores: 4
 memory: "{{ ( 3.5 * 1024 * cpu_cores ) + 512 | int }}"
 
-# F5 Destination MGMT-IP and VLAN Details
-mgmt_ip: 192.170.14.85
-mgmt_sn_cidr: 24
-mgmt_gw: 192.170.14.1
-mgmt_vlan: 3014
-
 # Imperative Provider
 provider:
   server: "{{ ansible_host }}"
