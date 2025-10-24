@@ -66,7 +66,7 @@
   ansible.builtin.debug:
     var: create_f5_os_tenant_ha_seq_matched_device
 
-- name: Deploy tenant to VELOS chassis
+- name: Deploy tenant to F5OS
   f5networks.f5os.f5os_tenant:
     name: "{{ create_f5_os_tenant_ha_seq_matched_device.hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_seq_image.name }}"

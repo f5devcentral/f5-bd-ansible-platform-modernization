@@ -14,8 +14,36 @@
     provider: "{{ provider }}"
   register: inventory_info
 
+- name: Collect management interface info
+  f5networks.f5_modules.bigip_command:
+    commands:
+      - list sys management-ip
+      - list sys management-route
+    provider: "{{ provider }}"
+  register: mgmt_info
+
+- name: Parse management IP, mask, and gateway
+  ansible.builtin.set_fact:
+    mgmt_ip: "{{ mgmt_info.stdout[0] | regex_search('address (\\S+)/(\\d+)', '\\1') }}"
+    mgmt_netmask: "{{ mgmt_info.stdout[0] | regex_search('address (\\S+)/(\\d+)', '\\2') }}"
+    mgmt_gateway: "{{ mgmt_info.stdout[1] | regex_search('gateway (\\S+)', '\\1') }}"
+
+- name: Merge management info into inventory data
+  ansible.builtin.set_fact:
+    inventory_info_combined: >-
+      {{
+        inventory_info
+        | combine({
+            'management_details': {
+              'mgmt_ip': mgmt_ip,
+              'mgmt_netmask': mgmt_netmask,
+              'mgmt_gateway': mgmt_gateway
+            }
+          }, recursive=True)
+      }}
+
 - name: "Copy Inventory_Info Variable to Execution Environment File"
   ansible.builtin.copy:
-    content: "{{ inventory_info | to_nice_json }}"
+    content: "{{ inventory_info_combined | to_nice_json }}"
     dest: "{{ backup_path }}/inventory_{{ inventory_hostname }}.json"
     mode: '0755'
