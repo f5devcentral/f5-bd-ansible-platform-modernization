@@ -1,7 +1,7 @@
 ---
 
 - name: "[01] Bastion Backup-Cleanup"
-  hosts: bastion-backup
+  hosts: backup-host
   roles:
     - clean_up
     - create_backup_path
@@ -22,7 +22,7 @@
     - backup_ucs_file
 
 - name: "[04] Copy Source BIG-IP Crypto-UCS Files to Bastion"
-  hosts: bastion-backup
+  hosts: backup-host
   roles:
     - copy_files_to_backup_host
 

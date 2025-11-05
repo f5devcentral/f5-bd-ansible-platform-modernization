@@ -1,6 +1,6 @@
 ---
 
-- name: Wait until host is unreachable (port 22 closed)
+- name: Wait until host is unreachable (port 22 closed) (30 Minutes Wait)
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: 22
@@ -11,8 +11,8 @@
   ignore_errors: true
   delegate_to: localhost
   until: port_up_check.failed
-  retries: 30
-  delay: 10
+  retries: 60
+  delay: 30
 
 - name: Confirm host is now offline
   ansible.builtin.debug:
