@@ -1,54 +1,73 @@
-# F5 Platform Modernization Ansible Automation
+# f5-bd-ansible-platform-modernization playbooks Validated Content Collection
 
-This Ansible playbook automates the modernization of F5 platforms, enabling seamless migration from older F5 BIG-IP models to newer ones. It facilitates the backup, migration, upgrade, and restoration of critical configurations, including UCS (User Configuration Set) files, crypto files, and other essential components. Additionally, this playbook supports version upgrades, such as migrating from lower versions (e.g., 15.1.x) to more recent releases (e.g., 17.5.x).
+## Abstract
+This  repository delivers a turnkey Ansible automation framework aimed at modernizing legacy F5 BIG-IP platforms by streamlining the migration, upgrade, and restoration of critical configurations across older and newer appliance models. The codebase is organized into distinct folders for standalone (single-node) and high-availability (HA) deployments, and includes a comprehensive roles directory encapsulating reusable functionality such as backup (UCS/crypto), disable tasks, tenant creation, and restoration workflows.
 
----
+Organizations running older BIG-IP hardware or software versions often face challenges when upgrading to newer F5 platforms such as **rSeries**, **VELOS**. Manual migration and restoration processes are error-prone and time-consuming, especially in **high-availability (HA)** environments.  
 
-## ⚠️ PLEASE READ FIRST!
+## What is Provided in this Repository
+We provide Playbooks and Roles for F5 BIG-IP Modernization through Automation, which can be implemented using Ansible Automation Platform Controller. There are at examples in each scenario (standalone, HA) containing example variables and provided recommended group_vars and host_var names. Additionally, demonstration videos of the solutions in use are provided at the bottom.
 
-- This code is a **WORK IN PROGRESS**, if there are any issues please Report.
-- The **Standalone code** has been tested for both **rSeries** and **Velos** Destination Deployments.  
-- The **High Availability code** has been tested for **rSeries** Destination Deployments.  (will be tested on Velos Soon)
+## Purpose of this Code
+This code is intended for customer/partner use and the primary intent of this codebase is to provide a repeatable, automated solution for migrating and upgrading from Legacy F5 BIG-IP platforms (iSeries, non-iSeries, Viprion, VCMP) to Next-Gen BIG-IP Platforms (rSeries/Velos) in enterprise environments.
 
----
+## Requirements
+- Requires Python 3.11 or Higher
 
-## 🛠 Prerequisites
+- Requires Ansible 2.15 or Higher
 
-Before using this playbook, ensure you have:
+- Users also need to include platform collections as per their requirements. The supported platform collections are:
+  - [f5networks.f5_bigip](https://github.com/F5Networks/f5-ansible-bigip)
+  - [f5networks.f5_modules](https://github.com/F5Networks/f5-ansible)
+  - [f5networks.f5os](https://github.com/F5Networks/f5-ansible-f5os)
 
-- Ansible Automation Platform configured in your environment.  
-- Access to both the source and destination F5 BIG-IP devices.  
-- A **backup host** for storing UCS and crypto files.  
-- SSH access to the backup host and F5 devices.  
-- The necessary F5 BIG-IP Collections installed on the Execution Environment `f5networks.f5_modules, f5networks.f5_bigip, f5networks.f5os`
+## Execution Environment Available to use
+- If you would like to utilize an existing Execution Environment in your Lab for this EE its located at 
+  - [F5 Ansible Execution Engine Link](quay.io/f5_business_development/f5_ee_new)
 
----
+## Supported Topologies
+- **Standalone BIG-IP systems** — single appliance or virtual instance.
+- **High-Availability pairs** — supporting both combined and sequential upgrade paths.
 
-## 📂 Repository Structure
+## Installation
 
-- **standalone/** — Consolidated and ready-to-use playbooks for standalone F5 deployments.  
-- **high_availability/** — Playbooks for high-availability (HA) F5 deployments.  
-- **roles/** — Contains all Ansible roles used across playbooks (backup, restore, disable, create tenants, etc.).  
-- **ansible.cfg** — Ansible configuration file.  
-- **README.md** — This documentation.  
-- **LICENSE** — GPL‑3.0 license.
+To consume this Validated Content from Automation Hub, please ensure that you add the following lines to your ansible.cfg file.
 
----
+```
+[galaxy]
+server_list = automation_hub
 
-## ⚡ Highlights
+[galaxy_server.automation_hub]
+url=https://cloud.redhat.com/api/automation-hub/
+auth_url=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+token=<SuperSecretToken>
+```
+The token can be obtained from the [Automation Hub Web UI](https://console.redhat.com/ansible/automation-hub/token).
 
-- **High Availability Code**  
-  The HA code can be done in two different ways `combined` which means both units will be upgraded at the same time, or `sequential` where the standby unit would be upgraded first then the active unit would be failed over and the new standby would be upgraded.
+Once the above steps are done, you can run the following command to install the collection.
 
----
+```
+ansible-galaxy collection install 
+```
 
-## ▶ Usage (Standalone)
+## Use Case
+Once installed, you can reference the f5-bd-ansible-platform-modernization collection content to import Templates into Ansible Automation Platform Controller to migrate from older F5 BIG-IP platforms to newer ones.
 
-1. In **Ansible Automation Platform** import the git Repository as a Project.
-2. Configure your inventory with source/destination device IPs and credentials.
-3. In **Ansible Automation Platform** Create Templates based on your folder and code `standalone, ha_combined, ha_sequential`  
-3. Run the playbook using **Ansible Automation Platform**.
 
----
+## Example Execution Context
+- Executed from **Ansible Automation Platform** against F5 devices using `httpapi` or `local` connections.
+- Playbooks and README files are located under:
+  - `standalone/`
+  - `high_availability/`
+- Commonly used to migrate from Legacy **BIG-IP 15.x or 16.x** Versions to **BIG-IP 17.x or 21.x**, or to transition from legacy hardware to modern F5 platforms like **rSeries** and **VELOS**.
 
-## 📖 Notes
+
+
+## YouTube Video of Code being implemented and used (Prior to it being a Collection)
+If you want to see an example of the Code in use see https://www.youtube.com/watch?v=V676EF_bq-4
+
+## License
+
+GNU General Public License v3.0 or later
+
+See [LICENSE](https://github.com/f5devcentral/f5-bd-ansible-eda/blob/main/LICENSE) to see the full text.

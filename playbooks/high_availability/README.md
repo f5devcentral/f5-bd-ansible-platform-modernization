@@ -44,4 +44,3 @@ Before using this playbook, ensure you have:
 ## 📖 Notes
 
 - Ensure all roles and prerequisites are properly configured before running the playbook to prevent errors.  
-
