@@ -1,7 +1,7 @@
 # F5 Destination Details
 server_port: 443
 cpu_cores: 4
-memory: "{{ ( 3.5 * 1024 * cpu_cores ) + 512 | int }}"
+memory: "{{ (3.5 * 1024 * cpu_cores) + 512 | int }}"
 
 # Source Device MGMT Gateway and Subnet
 mgmt_sn_cidr: 24
