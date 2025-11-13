@@ -1,11 +1,5 @@
-# F5 Destination Details
+# F5 Source Details
 server_port: 443
-cpu_cores: 4
-memory: "{{ ( 3.5 * 1024 * cpu_cores ) + 512 | int }}"
-
-# Source Device MGMT Gateway and Subnet
-mgmt_sn_cidr: 24
-mgmt_gw: 192.170.14.1
 
 # Imperative Provider
 provider:
@@ -18,11 +12,9 @@ provider:
 
 # Declarative Provider Variables
 ansible_httpapi_password: "{{ ansible_password }}"
-ansible_network_os: "f5networks.f5os.f5os"
+ansible_network_os: f5networks.f5_bigip.bigip
 ansible_httpapi_use_ssl: true
-ansible_httpapi_use_proxy: false
 ansible_httpapi_validate_certs: false
 ansible_httpapi_port: "{{ server_port }}"
-ansible_command_timeout: 1800
-persistent_log_messages: tenant_info.true
-vlan_list: []
+ansible_command_timeout: 600
+ansible_httpapi_use_proxy: false

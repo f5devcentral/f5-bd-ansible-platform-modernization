@@ -1,0 +1,29 @@
+## Last Updated 11/01/2025
+namespace: f5networks
+name: f5_platform_modernization
+version: 1.0.0
+readme: README.md
+authors:
+  - mmabis@f5.com
+description: Modernization from Legacy F5 BIG-IP Platforms to Next-Gen using Ansible Automation Platform
+license_file: LICENSE
+tags:
+  - infrastructure
+  - migration
+  - modernization
+  - tools
+dependencies:
+  f5networks.f5_modules: '*'
+  f5networks.f5_bigip: '*'
+  f5networks.f5os: '*'
+  ansible.utils: '*'
+  ansible.posix: '*'
+  ansible.netcommon: '*'
+  community.general: '*'
+repository: https://github.com/f5devcentral/f5-bd-platform-modernization
+documentation: https://github.com/f5devcentral/f5-bd-platform-modernization
+homepage: https://github.com/f5devcentral/f5-bd-platform-modernization
+issues: https://github.com/f5devcentral/f5-bd-platform-modernization/issues
+build_ignore:
+  - ".venv"
+  - "venv"

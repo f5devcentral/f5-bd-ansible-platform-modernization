@@ -1,0 +1,17 @@
+---
+name: Sanity tests
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  sanity-tests:
+    uses: ansible-network/github_actions/.github/workflows/sanity.yml@main

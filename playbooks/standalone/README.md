@@ -1,6 +1,8 @@
-# F5 Platform Modernization Ansible Automation - High Availability
+# Standalone — F5 Platform Modernization (Ansible)
 
 This Ansible playbook automates the modernization of F5 platforms, enabling seamless migration from older F5 BIG-IP models to newer ones. It facilitates the backup, migration, upgrade, and restoration of critical configurations, including UCS (User Configuration Set) files, crypto files, and other essential components. Additionally, this playbook supports version upgrades, such as migrating from lower versions (e.g., 15.1.x) to more recent releases (e.g., 17.5.x).
+
+This folder contains consolidated Ansible playbooks and supporting files for **standalone** F5 BIG-IP systems. The playbooks automate backup, migration, upgrade, and restoration of critical configurations (UCS, crypto, tenants, etc.) for single-node F5 deployments.
 
 ---
 
@@ -25,23 +27,29 @@ Before using this playbook, ensure you have:
 
 ---
 
-## 📂 High_Availability Directory Structure
+## Quickstart (Standalone)
 
-- **group_vars/** — Variables used to Connect to the Source and Destination Environments, also the `ha_pair_destination_chassis` contains information on the build of the F5OS Tenant OS - This is for migrate_ha_sequential code
-- **migrate_ha_combined_...** — Code is specific for the migration of HA Pairs migrating both units at the same time **(will cause outage)**
-- **migrate_ha_sequential_...** — Code is specific for the migration of HA Pairs migrating both units in sequence (Standby then Active) This should mitigate any outage issues.
-- **README.md** — This documentation.  
+1. Import the repository into Ansible Automation Platform as a Project.
+2. Configure inventory and credential objects for:
+   - source BIG-IP (source_host)
+   - destination BIG-IP (destination_host)
+   - backup host (backup_host)
+3. Examine `host_vars/*.yml` files to determine if changes are needed (Fork of Code) to operationalize your environment.
+4. Create a Job Template referencing the `migrate_standalone.yaml` playbook and the `standalone` inventory group with the appropriate Execution Engine.
+5. Add additional variables in your Job Template based on your environment (examine `extra_vars_in_aap` folder for Destination Type/Backup Path and Build Version)
+6. Run the Job Template.
 
 ---
 
-## ⚡ Highlights
+## 📂 Standalone Directory Structure
 
-- **High Availability Workflow:**  
-  There are 2 different sets of Code, Combined (Where both HA Units are migrated at the same time), and Sequential (where Standby is migrated first then failed over and then the Previous Active Unit is migrated)
+- `migrate_standalone.yml` — Canonical orchestrator playbook (entry point).
+- **../roles/** — Reusable roles referenced by the playbook (backup, restore, tenant_create, validate, etc.).  
+- **host_vars/** — — variables for standalone runs.
+- **README.md** — This document.
 
 ---
 
 ## 📖 Notes
 
 - Ensure all roles and prerequisites are properly configured before running the playbook to prevent errors.  
-
