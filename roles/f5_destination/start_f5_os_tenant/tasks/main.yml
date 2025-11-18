@@ -3,7 +3,7 @@
 - name: Start F5 Tenant
   f5networks.f5os.f5os_tenant:
     name: '{{ inventory.devices[0].hostname.split(".")[0] }}'
-    nodes: 1
+    nodes: "{{ tenant_nodes }}"
     running_state: deployed
 
 - name: Wait for F5 Tenant to Show GUI Page
