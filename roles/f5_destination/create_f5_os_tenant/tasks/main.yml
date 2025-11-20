@@ -1,18 +1,10 @@
 ---
 
-# - name: debug output
-#   ansible.builtin.debug:
-#     msg: "{{ memory |int }}"
-
 - name: Import Information From JSON File
   ansible.builtin.set_fact:
     inventory: "{{ lookup('file', item) | from_json }}"
   with_fileglob: "{{ backup_path }}/inventory_*.json"
   delegate_to: localhost
-
-# - name: debug output
-#   ansible.builtin.debug:
-#     var: inventory
 
 - name: Collect interface and vlan information on F5OS device
   f5networks.f5os.f5os_device_info:
@@ -21,11 +13,8 @@
       - vlans
   register: tenant_info
 
-# - name: debug output
-#   ansible.builtin.debug:
-#     var: tenant_info
-
-- name: Create VLANs From Old Confiruation
+# This is hard coded VL<TAG> number
+- name: Create VLANs From Old Confiruation - Named VL<TAG>
   f5networks.f5os.f5os_vlan:
     name: "vl{{ item.tag }}"
     vlan_id: "{{ item.tag }}"
@@ -58,16 +47,15 @@
   f5networks.f5os.f5os_tenant:
     name: '{{ inventory.devices[0].hostname.split(".")[0] }}'
     image_name: "{{ f5_tenant_image.name }}"
-    nodes:
-      - 1
+    nodes: "{{ tenant_nodes }}"
     mgmt_ip: "{{ mgmt_ip }}"
     mgmt_prefix: "{{ mgmt_sn_cidr }}"
     mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ vlan_list }}"
     cpu_cores: "{{ cpu_cores }}"
-    memory: "{{ memory | int }}"
-    cryptos: enabled
-    virtual_disk_size: "{{ disk_size | default('120') }}"
+    memory: "{{ memory }}"
+    cryptos: "{{ cryptos }}"
+    virtual_disk_size: "{{ disk_size }}"
     running_state: configured
 
 # This code cannot be used on rSeries till 2.0ish versioning of F5OS so making it so that if not defined as velos will avoid.

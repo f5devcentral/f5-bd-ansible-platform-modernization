@@ -3,7 +3,7 @@
 - name: Start F5 Tenant
   f5networks.f5os.f5os_tenant:
     name: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
-    nodes: 1
+    nodes: "{{ tenant_nodes }}"
     running_state: deployed
   when: create_f5_os_tenant_ha_matched_device is defined
 
@@ -19,20 +19,3 @@
   retries: 30
   delay: 30
   delegate_to: localhost
-
-
-# - name: Deploy tenant to VELOS chassis
-#   f5networks.f5os.f5os_tenant:
-#     name: "{{ create_f5_os_tenant_ha_matched_device.hostname.split('.')[0] | lower }}"
-#     image_name: "{{ create_f5_os_tenant_ha_image.name }}"
-#     nodes: [1]
-#     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
-#     mgmt_prefix: "{{ mgmt_sn_cidr }}"
-#     mgmt_gateway: "{{ mgmt_gw }}"
-#     vlans: "{{ create_f5_os_tenant_ha_vlan_list }}"
-#     cpu_cores: "{{ cpu_cores }}"
-#     memory: "{{ memory | int }}"
-#     cryptos: enabled
-#     virtual_disk_size: "{{ disk_size | default(120) }}"
-#     running_state: configured
-#   when: create_f5_os_tenant_ha_matched_device is defined

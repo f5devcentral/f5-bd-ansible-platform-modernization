@@ -70,15 +70,15 @@
   f5networks.f5os.f5os_tenant:
     name: "{{ create_f5_os_tenant_ha_seq_matched_device.hostname.split('.')[0] | lower }}"
     image_name: "{{ create_f5_os_tenant_ha_seq_image.name }}"
-    nodes: [1]
+    nodes: "{{ tenant_nodes }}"
     mgmt_ip: "{{ hostvars[source_host].ansible_host }}"
     mgmt_prefix: "{{ mgmt_sn_cidr }}"
     mgmt_gateway: "{{ mgmt_gw }}"
     vlans: "{{ create_f5_os_tenant_ha_seq_vlan_list }}"
     cpu_cores: "{{ cpu_cores }}"
-    memory: "{{ memory | int }}"
-    cryptos: enabled
-    virtual_disk_size: "{{ disk_size | default(120) }}"
+    memory: "{{ memory }}"
+    cryptos: "{{ cryptos }}"
+    virtual_disk_size: "{{ disk_size }}"
     running_state: configured
   when:
     - create_f5_os_tenant_ha_seq_matched_device is defined

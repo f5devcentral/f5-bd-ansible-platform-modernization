@@ -1,7 +1,12 @@
 # F5 Destination Details
 server_port: 443
-cpu_cores: 4
-memory: "{{ (3.5 * 1024 * cpu_cores) + 512 | int }}"
+
+# Each variable here is overridable but have defaults defined to prevent an undefined situation (Default 4 Core, 14848MB Ram, 120GB Storage, on Slot 1 )
+cpu_cores: "{{ override_cpu | default(4) | int }}"
+disk_size: "{{ override_disk_size | default(120) | int }}"
+memory: "{{ override_memory | default(((3.5 * 1024 * (cpu_cores | int)) + 512) | int) | int }}"
+tenant_nodes: "{{ [override_node | default(1) | int] }}"
+cryptos: "{{ override_cryptos | default('enabled') }}"
 
 # Source Device MGMT Gateway and Subnet
 mgmt_sn_cidr: 24
